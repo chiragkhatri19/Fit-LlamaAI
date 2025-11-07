@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { LlamaIcon } from './Icons';
-import { User, Moon, Sun, Menu, X, LogOut } from 'lucide-react';
+import { User, Menu, X, LogOut } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -23,13 +23,6 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
   const { user, signOut } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Initialize from what's actually on the document (set by the script in index.html)
-    if (typeof document !== 'undefined') {
-      return document.documentElement.classList.contains('dark');
-    }
-    return false;
-  });
   const { scrollY } = useScroll();
   const navbarWidth = useTransform(scrollY, [0, 100], ['100%', '90%']);
   const navbarPadding = useTransform(scrollY, [0, 100], ['1rem', '0.75rem']);
@@ -54,73 +47,7 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
     };
   }, [isMobileMenuOpen]);
 
-  useEffect(() => {
-    // Sync state with actual DOM on mount
-    const isCurrentlyDark = document.documentElement.classList.contains('dark');
-    setIsDarkMode(isCurrentlyDark);
-    
-    // Watch for external theme changes (e.g., from browser dev tools)
-    const observer = new MutationObserver(() => {
-      const isDark = document.documentElement.classList.contains('dark');
-      setIsDarkMode(isDark);
-    });
-    
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-    
-    return () => observer.disconnect();
-  }, []);
-
-  const toggleDarkMode = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Get current state from DOM (source of truth)
-    const currentlyDark = document.documentElement.classList.contains('dark');
-    const newMode = !currentlyDark;
-    
-    console.log('🔄 Toggle clicked! Current:', currentlyDark ? 'dark' : 'light', '→ New:', newMode ? 'dark' : 'light');
-    
-    // CRITICAL: Update DOM immediately - use multiple methods for maximum compatibility
-    const html = document.documentElement;
-    
-    if (newMode) {
-      html.classList.add('dark');
-      html.setAttribute('data-theme', 'dark');
-      html.style.colorScheme = 'dark';
-    } else {
-      html.classList.remove('dark');
-      html.setAttribute('data-theme', 'light');
-      html.style.colorScheme = 'light';
-    }
-    
-    // Store preference
-    localStorage.setItem('theme', newMode ? 'dark' : 'light');
-    
-    // Update React state
-    setIsDarkMode(newMode);
-    
-    // Force immediate visual update by triggering style recalculation
-    // Use requestAnimationFrame to ensure it happens after the class change
-    requestAnimationFrame(() => {
-      // Force reflow to recalculate all styles
-      void html.offsetHeight;
-      void document.body.offsetHeight;
-      
-      // Also trigger on all elements with dark: classes to force recalculation
-      const elementsWithDarkMode = document.querySelectorAll('[class*="dark:"]');
-      elementsWithDarkMode.forEach(el => {
-        void (el as HTMLElement).offsetHeight;
-      });
-    });
-    
-    console.log('✅ Theme changed to:', newMode ? 'dark' : 'light');
-    console.log('HTML classes:', html.className);
-    console.log('Has dark class?', html.classList.contains('dark'));
-    console.log('Color scheme:', html.style.colorScheme);
-  };
+  // Theme is now managed by useTheme hook
 
   const navItems = [
     { name: 'About', id: 'about' },
@@ -196,25 +123,6 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
-            {/* Dark Mode Toggle - Always visible */}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                toggleDarkMode(e);
-              }}
-              className="p-2.5 rounded-lg text-slate-900 dark:text-slate-100 bg-slate-100/50 dark:bg-slate-800/50 hover:bg-blue-100 dark:hover:bg-slate-700 hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-200 active:scale-95 touch-manipulation"
-              aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-              title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {isDarkMode ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </button>
-
             {/* User Profile - Desktop only */}
             {(user || userProfile) ? (
               <div className="hidden md:flex items-center gap-2">

@@ -21,6 +21,13 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 const AppContent: React.FC = () => {
   const [meals, setMeals] = useState<Meal[]>([]);
+  
+  // Ensure dark mode is always enabled
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.style.colorScheme = 'dark';
+  }, []);
   const [dashboardView, setDashboardView] = useState<'dashboard' | 'coach'>('dashboard');
   const location = useLocation();
   const navigate = useNavigate();

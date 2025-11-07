@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { 
   Settings, 
-  Moon, 
-  Sun, 
   Bell, 
   Shield, 
   Trash2, 
@@ -22,7 +20,6 @@ import { Button } from '../components/ui/aceternity';
 const SettingsPage: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState({
     email: true,
     push: true,
@@ -34,29 +31,6 @@ const SettingsPage: React.FC = () => {
     new: '',
     confirm: '',
   });
-
-  useEffect(() => {
-    // Check current theme
-    const isDark = document.documentElement.classList.contains('dark');
-    setDarkMode(isDark);
-  }, []);
-
-  const toggleDarkMode = () => {
-    const newMode = !darkMode;
-    setDarkMode(newMode);
-    
-    const html = document.documentElement;
-    if (newMode) {
-      html.classList.add('dark');
-      html.setAttribute('data-theme', 'dark');
-      html.style.colorScheme = 'dark';
-    } else {
-      html.classList.remove('dark');
-      html.setAttribute('data-theme', 'light');
-      html.style.colorScheme = 'light';
-    }
-    localStorage.setItem('theme', newMode ? 'dark' : 'light');
-  };
 
   const handleSignOut = () => {
     if (window.confirm('Are you sure you want to sign out?')) {
@@ -112,35 +86,6 @@ const SettingsPage: React.FC = () => {
             Settings
           </h1>
           <p className="text-slate-600 dark:text-slate-400">Manage your account settings and preferences</p>
-        </div>
-
-        {/* Appearance Settings */}
-        <div className="bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/60 dark:border-slate-800/50 p-6 mb-6">
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 mb-6">
-            <Sun className="w-5 h-5" />
-            Appearance
-          </h2>
-
-          <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-            <div>
-              <p className="font-medium text-slate-900 dark:text-slate-100">Dark Mode</p>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Switch between light and dark theme
-              </p>
-            </div>
-            <button
-              onClick={toggleDarkMode}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                darkMode ? 'bg-blue-600' : 'bg-slate-300 dark:bg-slate-700'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  darkMode ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-          </div>
         </div>
 
         {/* Notification Settings */}

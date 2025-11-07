@@ -11,17 +11,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>
-  // Initialize theme before React renders to prevent flash
+  // Always enable dark mode
   (function() {
-    const theme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const shouldBeDark = theme === 'dark' || (!theme && prefersDark);
-    
-    if (shouldBeDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    const html = document.documentElement;
+    html.classList.add('dark');
+    html.setAttribute('data-theme', 'dark');
+    html.style.colorScheme = 'dark';
   })();
 </script>
 <style>
@@ -33,17 +28,13 @@
     font-weight: 700;
   }
   
-  /* Force dark mode to work - ensure dark: variants are processed */
-  html.dark {
+  /* Dark mode is always enabled */
+  html {
     color-scheme: dark;
-  }
-  
-  html:not(.dark) {
-    color-scheme: light;
   }
 </style>
 </head>
-  <body class="bg-gradient-to-br from-slate-50 via-blue-50/20 to-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 transition-colors duration-300">
+  <body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

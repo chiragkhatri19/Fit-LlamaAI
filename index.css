@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Enable dark mode variant for Tailwind v4 */
+@variant dark (&:where(.dark, .dark *));
+
 /* Mobile optimizations */
 * {
   -webkit-tap-highlight-color: transparent;
@@ -40,5 +43,24 @@ html {
   body {
     overflow-x: hidden;
   }
+}
+
+/* Dark mode only - always enabled */
+html {
+  color-scheme: dark;
+}
+
+/* Dark mode only - always applied */
+html body {
+  background: linear-gradient(to bottom right, rgb(2 6 23), rgb(15 23 42), rgb(2 6 23));
+  color: rgb(248 250 252);
+}
+
+/* Smooth transitions */
+html,
+body {
+  transition-property: background-color, border-color, color, background;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
 }
 
