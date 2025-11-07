@@ -1,0 +1,8 @@
+
+{
+  "name": "Llama Life Coach",
+  "description": "Your personal AI nutrition coach is a Llama! Set fitness goals and get a tailored calorie and macro plan from your quirky, professional Llama coach. Log meals with your camera or our food database, and receive detailed insights to optimize your diet.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
