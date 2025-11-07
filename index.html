@@ -8,36 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script>
-      // Set config BEFORE Tailwind loads
-      window.tailwindConfig = {
-        darkMode: 'class',
-      };
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      // Ensure config is applied after Tailwind loads
-      (function configureTailwind() {
-        if (typeof tailwind !== 'undefined') {
-          tailwind.config = tailwind.config || {};
-          tailwind.config.darkMode = 'class';
-          console.log('✅ Tailwind dark mode configured:', tailwind.config.darkMode);
-        } else {
-          // Retry after a short delay
-          setTimeout(configureTailwind, 50);
-        }
-      })();
-    </script>
-  <script type="importmap">
-{
-  "imports": {
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.0"
-  }
-}
-  </script>
 <script>
   // Initialize theme before React renders to prevent flash
   (function() {
