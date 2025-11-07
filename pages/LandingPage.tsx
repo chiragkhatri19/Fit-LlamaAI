@@ -1,7 +1,7 @@
 import React from 'react';
 import { LlamaIcon, SparklesIcon, FireIcon, LightbulbIcon, CheckCircleIcon } from '../components/ui/Icons';
-import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
+import { WobbleCard, Button, BackgroundBeams, ShootingStars } from '../components/ui/aceternity';
 
 interface Props {
   onGetStarted: () => void;
@@ -32,9 +32,12 @@ const LandingPage: React.FC<Props> = ({ onGetStarted }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-sky-50/30 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 flex flex-col">
-      <Header />
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 flex-grow">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex flex-col relative transition-colors duration-300">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <BackgroundBeams className="opacity-30" />
+        <ShootingStars className="opacity-60 dark:opacity-40" />
+      </div>
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 flex-grow relative z-10">
         {/* Hero Section */}
         <div className="text-center mb-16 sm:mb-20">
           <div className="flex justify-center mb-6">
@@ -50,63 +53,64 @@ const LandingPage: React.FC<Props> = ({ onGetStarted }) => {
             </span>
           </h1>
           
-          <p className="text-xl sm:text-2xl text-slate-700 dark:text-slate-200 mb-4 max-w-3xl mx-auto font-medium">
+          <p className="text-xl sm:text-2xl text-slate-800 dark:text-slate-200 mb-4 max-w-3xl mx-auto font-medium">
             Your Personal AI Nutrition Coach
           </p>
           
-          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 mb-10 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-slate-700 dark:text-slate-300 mb-10 max-w-2xl mx-auto">
             Transform your nutrition journey with AI-powered meal tracking, personalized insights, and expert guidance—all in one beautiful app.
           </p>
 
-          <button
+          <Button
             onClick={onGetStarted}
-            className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-sky-600 rounded-full shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-sky-700 transition-all duration-300 transform hover:scale-105"
+            variant="moving-border"
+            className="group"
           >
-            <span className="relative z-10 flex items-center gap-2">
+            <span className="flex items-center gap-2">
               Get Started Free
-              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </span>
-            <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-sky-600 rounded-full blur opacity-50 group-hover:opacity-75 transition-opacity"></span>
-          </button>
+          </Button>
         </div>
 
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-16">
+               {/* Features Grid */}
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 mb-12 sm:mb-16">
           {features.map((feature, index) => (
-            <div
+            <WobbleCard
               key={index}
-              className="group relative bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200/50 dark:border-slate-800/50"
+              containerClassName="h-full"
+              className="p-6"
             >
-              <div className="flex flex-col items-center text-center">
-                <div className="mb-4 p-3 bg-gradient-to-br from-blue-100 to-sky-100 dark:from-blue-900/30 dark:to-sky-900/30 rounded-xl group-hover:scale-110 transition-transform">
+              <div className="flex flex-col items-center text-center h-full">
+                <div className="mb-4 p-3 bg-gradient-to-br from-blue-100 to-sky-100 dark:from-blue-950/40 dark:to-sky-950/40 rounded-lg shadow-sm">
                   {feature.icon}
                 </div>
-                <h3 className="text-lg font-bold mb-2 text-slate-800 dark:text-slate-100">
+                <h3 className="text-lg font-bold mb-2 text-slate-900 dark:text-slate-100">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300">
+                <p className="text-sm text-slate-700 dark:text-slate-300">
                   {feature.description}
                 </p>
               </div>
-            </div>
+            </WobbleCard>
           ))}
         </div>
 
         {/* How It Works Section */}
-        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-3xl p-8 sm:p-12 shadow-xl border border-gray-200/50 dark:border-slate-800/50">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-sky-600">
+        <div className="bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 md:p-12 shadow-xl border border-slate-200/60 dark:border-slate-800/50">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-sky-600">
             How It Works
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             <div className="text-center">
               <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg">
                 1
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-slate-800 dark:text-slate-100">Set Your Goals</h3>
-              <p className="text-slate-600 dark:text-slate-300">
+                      <h3 className="text-xl font-semibold mb-2 text-slate-900 dark:text-slate-100">Set Your Goals</h3>
+                      <p className="text-slate-700 dark:text-slate-300">
                 Tell us about yourself and your fitness goals. We'll create a personalized nutrition plan.
               </p>
             </div>
@@ -135,18 +139,18 @@ const LandingPage: React.FC<Props> = ({ onGetStarted }) => {
 
         {/* Final CTA */}
         <div className="text-center mt-16">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-slate-800 dark:text-slate-100">
-            Ready to Transform Your Nutrition?
-          </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-300 mb-8">
+                  <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-slate-900 dark:text-slate-100">
+                    Ready to Transform Your Nutrition?
+                  </h2>
+                  <p className="text-lg text-slate-700 dark:text-slate-300 mb-8">
             Join thousands of users who are achieving their fitness goals with Fit Llama AI.
           </p>
-          <button
+          <Button
             onClick={onGetStarted}
-            className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-sky-600 rounded-full shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-sky-700 transition-all duration-300 transform hover:scale-105"
+            variant="moving-border"
           >
             Start Your Journey Today
-          </button>
+          </Button>
         </div>
       </div>
       <Footer />

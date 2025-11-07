@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { analyzeImage, searchFoodDatabase } from '../../services/geminiService';
 import type { Meal, FoodItem, AnalysisResult, MealSlot, FoodSearchResult } from '../../types';
 import { CloseIcon, SparklesIcon, PhotoIcon, LoaderIcon, ErrorIcon, UploadIcon, SearchIcon, CameraIcon, AnimatedLlamaLoader } from '../ui/Icons';
+import { AnimatedModal } from '../ui/aceternity';
 import CameraCapture from './CameraCapture';
 
 interface Props {
@@ -240,7 +241,7 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
 
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+    <>
       <style>{`
         .animate-fade-in-out {
           animation: fadeInOut 4s ease-in-out infinite;
@@ -250,24 +251,20 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
           25%, 75% { opacity: 1; }
         }
       `}</style>
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md md:max-w-3xl max-h-[90vh] flex flex-col">
-        <header className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+      <AnimatedModal isOpen={true} onClose={onClose}>
+        <header className="flex justify-between items-center p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700">
             <div>
-                <h2 className="text-xl font-bold">Log a New Meal</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">Log a New Meal</h2>
                 <select value={selectedMealSlotId} onChange={e => setSelectedMealSlotId(e.target.value)} className="bg-transparent text-sm text-blue-600 dark:text-blue-400 font-semibold focus:outline-none">
                     {mealSlots.map(slot => <option key={slot.id} value={slot.id}>{slot.name}</option>)}
                 </select>
             </div>
-            <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
-                <CloseIcon className="w-6 h-6" />
-            </button>
         </header>
-        
-        <div className="p-6 overflow-y-auto">
+            <div className="p-4 sm:p-6 overflow-y-auto flex-grow">
             {/* Tabs */}
-            <div className="flex border-b border-gray-200 dark:border-gray-700 mb-6">
-                <button onClick={() => setActiveTab('ai')} className={`px-4 py-2 font-semibold ${activeTab === 'ai' ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}>AI Scan</button>
-                <button onClick={() => setActiveTab('manual')} className={`px-4 py-2 font-semibold ${activeTab === 'manual' ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}>Manual Entry</button>
+            <div className="flex border-b border-slate-200 dark:border-slate-700 mb-6">
+                <button onClick={() => setActiveTab('ai')} className={`px-4 py-2.5 font-semibold transition-all duration-200 ${activeTab === 'ai' ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'}`}>AI Scan</button>
+                <button onClick={() => setActiveTab('manual')} className={`px-4 py-2.5 font-semibold transition-all duration-200 ${activeTab === 'manual' ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'}`}>Manual Entry</button>
             </div>
 
             {/* AI Tab Content */}
@@ -279,10 +276,10 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
                             <h3 className="text-lg font-semibold mb-2">Snap or Upload Your Meal</h3>
                             <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">Let your Llama Coach do the work. Use your camera or select a photo.</p>
                             <div className="flex flex-col sm:flex-row gap-4 w-full max-w-xs">
-                                <button onClick={() => setIsCameraOpen(true)} className="flex-1 inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-500 text-sm font-medium rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700">
+                                <button onClick={() => setIsCameraOpen(true)} className="flex-1 inline-flex items-center justify-center px-6 py-3 border border-slate-300 dark:border-slate-600 text-sm font-semibold rounded-xl shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-200 text-slate-700 dark:text-slate-300">
                                     <CameraIcon className="w-5 h-5 mr-2"/> Use Camera
                                 </button>
-                                <label htmlFor="file-upload" className="flex-1 cursor-pointer inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+                                <label htmlFor="file-upload" className="flex-1 cursor-pointer inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-semibold rounded-xl shadow-md hover:shadow-lg text-white bg-blue-600 hover:bg-blue-700 transition-all duration-200">
                                     <PhotoIcon className="w-5 h-5 mr-2"/> Select Photo
                                 </label>
                             </div>
@@ -298,7 +295,7 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
                                 <button
                                     onClick={handleAnalyzeClick}
                                     disabled={logState === 'loading'}
-                                    className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 disabled:opacity-50"
+                                    className="w-full flex items-center justify-center px-4 py-3 border border-transparent text-base font-semibold rounded-xl shadow-md hover:shadow-lg text-white bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                                 >
                                     {logState === 'loading' ? <LoaderIcon className="animate-spin w-5 h-5 mr-2" /> : <SparklesIcon className="w-5 h-5 mr-2" />}
                                     {logState === 'loading' ? 'Analyzing...' : (analysisResult ? 'Re-analyze' : 'Analyze Photo')}
@@ -332,7 +329,7 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
                                                                 type="number"
                                                                 value={item.servingSizeValue}
                                                                 onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                                                                className="w-20 p-1 rounded-md border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-600 text-sm"
+                                                                className="w-20 px-2 py-1.5 rounded-lg border border-slate-300 dark:border-slate-500 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200"
                                                             />
                                                             <span className="text-xs text-gray-500 dark:text-gray-400">{item.servingSizeUnit}</span>
                                                         </div>
@@ -358,14 +355,14 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
             {/* Manual Tab Content */}
             {activeTab === 'manual' && (
                 <div className="space-y-4">
-                    <input type="text" placeholder="Meal Name (e.g., Post-workout shake)" value={mealName} onChange={e => setMealName(e.target.value)} className="w-full p-3 rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-slate-700 shadow-sm" />
+                    <input type="text" placeholder="Meal Name (e.g., Post-workout shake)" value={mealName} onChange={e => setMealName(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200" />
                     
                     {/* Search Bar */}
                     <form onSubmit={handleSearch}>
                         <div className="flex gap-2">
-                            <input type="text" placeholder="Search for food (e.g., 'chicken breast')" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full p-3 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-600 shadow-sm" />
-                            <button type="submit" disabled={isSearching} className="p-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50">
-                                {isSearching ? <LoaderIcon className="w-6 h-6 animate-spin"/> : <SearchIcon className="w-6 h-6"/>}
+                            <input type="text" placeholder="Search for food (e.g., 'chicken breast')" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="flex-1 px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200" />
+                            <button type="submit" disabled={isSearching} className="px-4 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg">
+                                {isSearching ? <LoaderIcon className="w-5 h-5 animate-spin"/> : <SearchIcon className="w-5 h-5"/>}
                             </button>
                         </div>
                     </form>
@@ -424,20 +421,20 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
             )}
         </div>
 
-        <footer className="p-4 border-t border-gray-200 dark:border-gray-700 mt-auto">
+        <footer className="p-4 border-t border-slate-200 dark:border-slate-700 mt-auto">
             {activeTab === 'ai' && (
-                <button onClick={handleConfirmMeal} disabled={!analysisResult} className="w-full px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                <button onClick={handleConfirmMeal} disabled={!analysisResult} className="w-full px-6 py-3.5 border border-transparent text-base font-semibold rounded-xl shadow-md hover:shadow-lg text-white bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.01] active:scale-[0.99] disabled:transform-none">
                     Confirm & Add Meal
                 </button>
             )}
              {activeTab === 'manual' && (
-                <button onClick={handleManualSubmit} disabled={manualItems.length === 0} className="w-full px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                <button onClick={handleManualSubmit} disabled={manualItems.length === 0} className="w-full px-6 py-3.5 border border-transparent text-base font-semibold rounded-xl shadow-md hover:shadow-lg text-white bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.01] active:scale-[0.99] disabled:transform-none">
                     Add Manual Meal
                 </button>
             )}
         </footer>
-      </div>
-    </div>
+      </AnimatedModal>
+    </>
   );
 };
 

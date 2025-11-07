@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import type { UserProfile, Meal } from './types';
 import LandingPage from './pages/LandingPage';
+import AboutPage from './pages/AboutPage';
+import PricingPage from './pages/PricingPage';
 import OnboardingPage from './pages/OnboardingPage';
 import DashboardPage from './pages/DashboardPage';
-import Header from './components/ui/Header';
+import ResizableNavbar from './components/ui/ResizableNavbar';
 import Footer from './components/ui/Footer';
 import { calculateNutritionalGoals } from './utils/nutritionCalculators';
 
@@ -12,6 +14,8 @@ const App: React.FC = () => {
   const [meals, setMeals] = useState<Meal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showLanding, setShowLanding] = useState(true); // Start with landing page by default
+  const [currentPage, setCurrentPage] = useState<string>('home');
+  const [dashboardView, setDashboardView] = useState<'dashboard' | 'coach'>('dashboard');
 
   useEffect(() => {
     try {
@@ -47,6 +51,23 @@ const App: React.FC = () => {
 
   const handleGoToLanding = () => {
     setShowLanding(true);
+    setCurrentPage('home');
+  };
+
+  const handleNavigate = (page: string) => {
+    setCurrentPage(page);
+    if (page === 'home') {
+      setShowLanding(true);
+    } else if (page === 'about' || page === 'pricing') {
+      setShowLanding(false);
+      // These pages will be rendered separately
+    } else if (page === 'coach') {
+      setShowLanding(false);
+      setDashboardView('coach');
+    } else if (page === 'profile') {
+      setShowLanding(false);
+      setDashboardView('dashboard');
+    }
   };
 
   const handleOnboardingComplete = (profile: UserProfile) => {
@@ -91,31 +112,46 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 flex flex-col">
-      {showLanding ? (
-        <LandingPage onGetStarted={handleGetStarted} />
-      ) : (
-        <>
-          <Header 
-            onResetApp={userProfile ? handleResetApp : undefined}
-            onLogoClick={handleGoToLanding}
-          />
-          <main className="flex-grow w-full">
-            {!userProfile || !nutritionalGoals ? (
-              <OnboardingPage onComplete={handleOnboardingComplete} />
-            ) : (
-              <DashboardPage 
-                  userProfile={userProfile}
-                  onUpdateProfile={handleUpdateProfile}
-                  nutritionalGoals={nutritionalGoals}
-                  meals={meals}
-                  onAddMeal={handleAddMeal}
-              />
-            )}
-          </main>
-          <Footer />
-        </>
-      )}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300 flex flex-col">
+      <ResizableNavbar
+        onLogoClick={handleGoToLanding}
+        onNavigate={handleNavigate}
+        userProfile={userProfile}
+        currentPage={currentPage}
+      />
+      <div className="pt-16 md:pt-20">
+        {currentPage === 'about' ? (
+          <>
+            <AboutPage />
+            <Footer />
+          </>
+        ) : currentPage === 'pricing' ? (
+          <>
+            <PricingPage />
+            <Footer />
+          </>
+        ) : showLanding ? (
+          <LandingPage onGetStarted={handleGetStarted} />
+        ) : (
+          <>
+            <main className="flex-grow w-full">
+              {!userProfile || !nutritionalGoals ? (
+                <OnboardingPage onComplete={handleOnboardingComplete} />
+              ) : (
+                <DashboardPage 
+                    userProfile={userProfile}
+                    onUpdateProfile={handleUpdateProfile}
+                    nutritionalGoals={nutritionalGoals}
+                    meals={meals}
+                    onAddMeal={handleAddMeal}
+                    initialView={dashboardView}
+                />
+              )}
+            </main>
+            <Footer />
+          </>
+        )}
+      </div>
     </div>
   );
 };

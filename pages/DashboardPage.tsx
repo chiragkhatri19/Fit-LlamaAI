@@ -12,6 +12,7 @@ interface Props {
   meals: Meal[];
   onAddMeal: (meal: Meal) => void;
   onUpdateProfile: (profile: UserProfile) => void;
+  initialView?: 'dashboard' | 'coach';
 }
 
 type View = 'dashboard' | 'coach';
@@ -29,14 +30,14 @@ const MealPlanSetup: React.FC<{ onSetupComplete: (slots: MealSlot[]) => void }> 
     };
 
     return (
-        <div className="fixed inset-0 bg-gray-900/80 backdrop-blur-sm flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 text-center max-w-sm mx-auto">
-                <h2 className="text-2xl font-bold mb-2">Let's Plan Your Day</h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">How many meals do you typically eat?</p>
+        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-white/95 dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200/60 dark:border-slate-800/50 p-8 text-center max-w-sm mx-auto">
+                <h2 className="text-2xl font-bold mb-2 text-slate-900 dark:text-slate-100">Let's Plan Your Day</h2>
+                <p className="text-slate-700 dark:text-gray-400 mb-6">How many meals do you typically eat?</p>
                 <div className="flex items-center justify-center gap-4 mb-8">
-                    <button onClick={() => setNumMeals(p => Math.max(1, p - 1))} className="px-4 py-2 rounded-md bg-gray-200 dark:bg-slate-700 font-bold">-</button>
-                    <span className="text-3xl font-bold w-16 text-center">{numMeals}</span>
-                    <button onClick={() => setNumMeals(p => Math.min(10, p + 1))} className="px-4 py-2 rounded-md bg-gray-200 dark:bg-slate-700 font-bold">+</button>
+                    <button onClick={() => setNumMeals(p => Math.max(1, p - 1))} className="px-4 py-2 rounded-md bg-slate-200 dark:bg-slate-700 font-bold text-slate-900 dark:text-slate-100">-</button>
+                    <span className="text-3xl font-bold w-16 text-center text-slate-900 dark:text-slate-100">{numMeals}</span>
+                    <button onClick={() => setNumMeals(p => Math.min(10, p + 1))} className="px-4 py-2 rounded-md bg-slate-200 dark:bg-slate-700 font-bold text-slate-900 dark:text-slate-100">+</button>
                 </div>
                 <button onClick={handleSetup} className="w-full px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
                     Set My Meal Plan
@@ -47,10 +48,10 @@ const MealPlanSetup: React.FC<{ onSetupComplete: (slots: MealSlot[]) => void }> 
 };
 
 
-const DashboardPage: React.FC<Props> = ({ userProfile, nutritionalGoals, meals, onAddMeal, onUpdateProfile }) => {
+const DashboardPage: React.FC<Props> = ({ userProfile, nutritionalGoals, meals, onAddMeal, onUpdateProfile, initialView = 'dashboard' }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [activeMealSlotId, setActiveMealSlotId] = useState<string | null>(null);
-    const [activeView, setActiveView] = useState<View>('dashboard');
+    const [activeView, setActiveView] = useState<View>(initialView);
     
 
     const handleMealPlanSetup = (slots: MealSlot[]) => {
@@ -93,15 +94,15 @@ const DashboardPage: React.FC<Props> = ({ userProfile, nutritionalGoals, meals, 
             <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-sky-500">
                 {activeView === 'dashboard' ? "Today's Dashboard" : "Your Llama Coach"}
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">Welcome back! Here's your daily nutrition summary.</p>
+            <p className="text-slate-700 dark:text-gray-400">Welcome back! Here's your daily nutrition summary.</p>
         </div>
       </header>
         
       {/* View Toggle */}
        <div className="mb-8 flex justify-center">
-            <div className="bg-gray-200 dark:bg-slate-900 rounded-full p-1 flex items-center space-x-1">
-                <button onClick={() => setActiveView('dashboard')} className={`px-6 py-2 text-sm font-semibold rounded-full transition-colors ${activeView === 'dashboard' ? 'bg-white dark:bg-slate-950 text-blue-600 shadow' : 'text-gray-600 dark:text-gray-300'}`}>Dashboard</button>
-                <button onClick={() => setActiveView('coach')} className={`px-6 py-2 text-sm font-semibold rounded-full transition-colors ${activeView === 'coach' ? 'bg-white dark:bg-slate-950 text-blue-600 shadow' : 'text-gray-600 dark:text-gray-300'}`}>Fit Llama AI</button>
+            <div className="bg-slate-200/60 dark:bg-slate-900 rounded-full p-1 flex items-center space-x-1">
+                <button onClick={() => setActiveView('dashboard')} className={`px-6 py-2 text-sm font-semibold rounded-full transition-colors ${activeView === 'dashboard' ? 'bg-white dark:bg-slate-950 text-blue-600 shadow-md' : 'text-slate-700 dark:text-gray-300'}`}>Dashboard</button>
+                <button onClick={() => setActiveView('coach')} className={`px-6 py-2 text-sm font-semibold rounded-full transition-colors ${activeView === 'coach' ? 'bg-white dark:bg-slate-950 text-blue-600 shadow-md' : 'text-slate-700 dark:text-gray-300'}`}>Fit Llama AI</button>
             </div>
         </div>
 
@@ -109,9 +110,9 @@ const DashboardPage: React.FC<Props> = ({ userProfile, nutritionalGoals, meals, 
         {activeView === 'dashboard' && (
             <div className="animate-fade-in">
                 {/* Daily Goals Summary */}
-                <div className="bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg p-6 mb-8">
-                    <h2 className="text-xl font-bold mb-4">Your Daily Goals</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div className="bg-white/95 dark:bg-slate-900/50 rounded-2xl shadow-xl border border-slate-200/60 dark:border-slate-800/50 p-6 mb-8">
+                    <h2 className="text-lg sm:text-xl font-bold mb-4">Your Daily Goals</h2>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-center">
                         <ProgressCircle label="Calories" current={dailyTotals.calories} goal={nutritionalGoals.calories} color="text-red-500" unit="kcal" />
                         <ProgressCircle label="Protein" current={dailyTotals.protein} goal={nutritionalGoals.protein} color="text-sky-500" unit="g" />
                         <ProgressCircle label="Carbs" current={dailyTotals.carbs} goal={nutritionalGoals.carbs} color="text-amber-500" unit="g" />
@@ -120,27 +121,27 @@ const DashboardPage: React.FC<Props> = ({ userProfile, nutritionalGoals, meals, 
                 </div>
 
                 {/* Meal Logging Section */}
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                     {userProfile.mealSlots.map(slot => (
-                        <div key={slot.id} className="bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg p-6 flex flex-col">
+                        <div key={slot.id} className="bg-white/95 dark:bg-slate-900/50 rounded-2xl shadow-xl border border-slate-200/60 dark:border-slate-800/50 p-6 flex flex-col">
                             <div className="flex justify-between items-start mb-4">
                                 <div>
                                     <input
                                         type="text"
                                         value={slot.name}
                                         onChange={(e) => handleUpdateMealSlot(slot.id, 'name', e.target.value)}
-                                        className="text-xl font-bold bg-transparent focus:outline-none focus:bg-gray-100 dark:focus:bg-slate-700 rounded-md -ml-2 px-2"
+                                        className="text-xl font-bold bg-transparent focus:outline-none focus:bg-slate-100 dark:focus:bg-slate-700 rounded-md -ml-2 px-2"
                                     />
                                     <input
                                         type="time"
                                         value={slot.time}
                                         onChange={(e) => handleUpdateMealSlot(slot.id, 'time', e.target.value)}
-                                        className="text-sm text-gray-500 bg-transparent focus:outline-none focus:bg-gray-100 dark:focus:bg-slate-700 rounded-md -ml-2 px-2"
+                                        className="text-sm text-slate-600 bg-transparent focus:outline-none focus:bg-slate-100 dark:focus:bg-slate-700 rounded-md -ml-2 px-2"
                                     />
                                 </div>
-                                <button onClick={() => openLogMealModal(slot.id)} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:opacity-80 transition-opacity">
-                                    <PlusCircleIcon className="w-6 h-6" />
-                                    <span className="font-semibold">Log</span>
+                                <button onClick={() => openLogMealModal(slot.id)} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:opacity-80 transition-opacity px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/30 min-h-[44px]">
+                                    <PlusCircleIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+                                    <span className="font-semibold text-sm sm:text-base">Log</span>
                                 </button>
                             </div>
                             <div className="space-y-4 flex-grow">
@@ -148,7 +149,7 @@ const DashboardPage: React.FC<Props> = ({ userProfile, nutritionalGoals, meals, 
                                     loggedMealsBySlot(slot.id).map(meal => <MealCard key={meal.id} meal={meal} />)
                                 ) : (
                                     <div className="flex-grow flex items-center justify-center">
-                                        <p className="text-center text-gray-500 dark:text-gray-400 py-4">No food logged.</p>
+                                        <p className="text-center text-slate-600 dark:text-gray-400 py-4">No food logged.</p>
                                     </div>
                                 )}
                             </div>
@@ -220,7 +221,7 @@ const ProgressCircle: React.FC<ProgressCircleProps> = ({ label, current, goal, c
                 </svg>
                 <div className={`absolute inset-0 flex flex-col items-center justify-center ${color}`}>
                     <span className="text-xl font-bold">{Math.round(current)}</span>
-                    <span className="text-xs -mt-1 text-gray-500">/ {goal}{unit}</span>
+                    <span className="text-xs -mt-1 text-slate-600">/ {goal}{unit}</span>
                 </div>
             </div>
             <p className="font-semibold mt-2">{label}</p>
@@ -242,7 +243,7 @@ const MealCard: React.FC<{ meal: Meal }> = ({ meal }) => {
             <div className="flex justify-between items-center cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
                 <div>
                     <p className="font-semibold capitalize">{meal.name}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-slate-700 dark:text-gray-400">
                         {meal.totals.calories} kcal &bull; {meal.totals.protein}g P
                     </p>
                 </div>
@@ -254,7 +255,7 @@ const MealCard: React.FC<{ meal: Meal }> = ({ meal }) => {
                 <div className="mt-4 animate-fade-in space-y-4">
                     <div>
                         <h4 className="font-semibold text-sm mb-2">Items:</h4>
-                        <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-300">
+                        <ul className="space-y-1 text-sm text-slate-800 dark:text-gray-300">
                             {meal.items.map(item => (
                                 <li key={item.id} className="flex justify-between">
                                     <span>{item.name} ({item.servingSizeValue}{item.servingSizeUnit})</span>
@@ -268,7 +269,7 @@ const MealCard: React.FC<{ meal: Meal }> = ({ meal }) => {
                             <LightbulbIcon className="w-5 h-5 text-blue-500 dark:text-blue-400"/>
                             <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-300">AI Insights</h4>
                         </div>
-                        <ul className="space-y-1 list-disc list-inside text-xs text-gray-700 dark:text-gray-300">
+                        <ul className="space-y-1 list-disc list-inside text-xs text-slate-800 dark:text-gray-300">
                             {meal.insights.map((insight, index) => <li key={index}>{insight}</li>)}
                         </ul>
                     </div>

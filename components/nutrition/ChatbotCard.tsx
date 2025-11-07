@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import type { UserProfile, Macros, Meal, ChatMessage } from '../../types';
 import { getChatbotResponse } from '../../services/geminiService';
 import { ChatBubbleLeftRightIcon, PaperAirplaneIcon } from '../ui/Icons';
+import { CardSpotlight } from '../ui/aceternity';
 
 interface Props {
   userProfile: UserProfile;
@@ -51,30 +52,32 @@ const ChatbotCard: React.FC<Props> = ({ userProfile, nutritionalGoals, meals }) 
 
 
     return (
-        <div className="bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg p-6 animate-fade-in">
-            <div className="flex items-center gap-3 mb-4">
-                <ChatBubbleLeftRightIcon className="w-6 h-6 text-blue-500" />
-                <h3 className="text-xl font-bold">Chat With Lorenzo</h3>
+        <CardSpotlight className="p-6 border-slate-200/60 dark:border-slate-800">
+            <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
+                    <ChatBubbleLeftRightIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Chat With Lorenzo</h3>
             </div>
             
-            <div className="h-64 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg mb-4">
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl mb-4 border border-slate-200/50 dark:border-slate-700/50">
                 {messages.map((msg, index) => (
                     <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-xs md:max-w-md p-3 rounded-2xl ${msg.role === 'user' 
-                            ? 'bg-blue-600 text-white rounded-br-lg' 
-                            : 'bg-gray-200 dark:bg-slate-600 text-gray-800 dark:text-gray-200 rounded-bl-lg'}`
+                        <div className={`max-w-xs md:max-w-md p-3 rounded-xl ${msg.role === 'user' 
+                            ? 'bg-blue-600 text-white rounded-br-sm shadow-sm' 
+                            : 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-bl-sm shadow-sm border border-slate-200 dark:border-slate-600'}`
                         }>
-                            <p className="text-sm">{msg.parts[0].text}</p>
+                            <p className="text-sm leading-relaxed">{msg.parts[0].text}</p>
                         </div>
                     </div>
                 ))}
                 {isLoading && (
                      <div className="flex justify-start">
-                         <div className="max-w-xs md:max-w-md p-3 rounded-2xl bg-gray-200 dark:bg-slate-600">
-                             <div className="flex items-center space-x-2">
-                                 <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                                 <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                                 <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                         <div className="max-w-xs md:max-w-md p-3 rounded-xl bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600">
+                             <div className="flex items-center space-x-1.5">
+                                 <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                                 <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                                 <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
                              </div>
                          </div>
                      </div>
@@ -82,20 +85,25 @@ const ChatbotCard: React.FC<Props> = ({ userProfile, nutritionalGoals, meals }) 
                 <div ref={messagesEndRef} />
             </div>
 
-            <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-                <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask your Llama Coach..."
-                    className="flex-grow p-3 rounded-full border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-slate-700 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    disabled={isLoading}
-                />
-                <button type="submit" disabled={isLoading || !input.trim()} className="p-3 rounded-full bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors">
-                    <PaperAirplaneIcon className="w-6 h-6" />
-                </button>
-            </form>
-        </div>
+                 <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+                     <input
+                         type="text"
+                         value={input}
+                         onChange={(e) => setInput(e.target.value)}
+                         placeholder="Ask your Llama Coach..."
+                         className="flex-grow px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 text-sm sm:text-base"
+                         disabled={isLoading}
+                     />
+                     <button
+                         type="submit"
+                         disabled={isLoading || !input.trim()}
+                         className="p-2.5 sm:p-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-500 disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md disabled:shadow-none min-w-[44px] min-h-[44px] flex items-center justify-center"
+                         aria-label="Send message"
+                     >
+                         <PaperAirplaneIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                     </button>
+                 </form>
+        </CardSpotlight>
     );
 };
 
