@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import type { UserProfile, Macros, Meal, ChatMessage } from '../types';
-import { getChatbotResponse } from '../services/geminiService';
-import { ChatBubbleLeftRightIcon, PaperAirplaneIcon } from './Icons';
+import type { UserProfile, Macros, Meal, ChatMessage } from '../../types';
+import { getChatbotResponse } from '../../services/geminiService';
+import { ChatBubbleLeftRightIcon, PaperAirplaneIcon } from '../ui/Icons';
 
 interface Props {
   userProfile: UserProfile;
@@ -51,9 +51,9 @@ const ChatbotCard: React.FC<Props> = ({ userProfile, nutritionalGoals, meals }) 
 
 
     return (
-        <div className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg p-6 animate-fade-in">
+        <div className="bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg p-6 animate-fade-in">
             <div className="flex items-center gap-3 mb-4">
-                <ChatBubbleLeftRightIcon className="w-6 h-6 text-violet-500" />
+                <ChatBubbleLeftRightIcon className="w-6 h-6 text-blue-500" />
                 <h3 className="text-xl font-bold">Chat With Lorenzo</h3>
             </div>
             
@@ -61,7 +61,7 @@ const ChatbotCard: React.FC<Props> = ({ userProfile, nutritionalGoals, meals }) 
                 {messages.map((msg, index) => (
                     <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                         <div className={`max-w-xs md:max-w-md p-3 rounded-2xl ${msg.role === 'user' 
-                            ? 'bg-violet-600 text-white rounded-br-lg' 
+                            ? 'bg-blue-600 text-white rounded-br-lg' 
                             : 'bg-gray-200 dark:bg-slate-600 text-gray-800 dark:text-gray-200 rounded-bl-lg'}`
                         }>
                             <p className="text-sm">{msg.parts[0].text}</p>
@@ -88,10 +88,10 @@ const ChatbotCard: React.FC<Props> = ({ userProfile, nutritionalGoals, meals }) 
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask your Llama Coach..."
-                    className="flex-grow p-3 rounded-full border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-slate-700 shadow-sm focus:ring-violet-500 focus:border-violet-500"
+                    className="flex-grow p-3 rounded-full border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-slate-700 shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     disabled={isLoading}
                 />
-                <button type="submit" disabled={isLoading || !input.trim()} className="p-3 rounded-full bg-violet-600 text-white hover:bg-violet-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors">
+                <button type="submit" disabled={isLoading || !input.trim()} className="p-3 rounded-full bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors">
                     <PaperAirplaneIcon className="w-6 h-6" />
                 </button>
             </form>
@@ -100,3 +100,4 @@ const ChatbotCard: React.FC<Props> = ({ userProfile, nutritionalGoals, meals }) 
 };
 
 export default ChatbotCard;
+

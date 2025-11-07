@@ -157,7 +157,7 @@ export const TrendingUpIcon: React.FC<IconProps> = (props) => (
 
 export const CameraIcon: React.FC<IconProps> = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-2.087.8-3.642 3.128-3.642 5.77 0 2.642 1.555 4.97 3.642 5.77a2.31 2.31 0 011.64 1.055l.822 1.315a.41.41 0 00.665 0l.822-1.315a2.31 2.31 0 011.64-1.055A4.256 4.256 0 0016.5 12a4.256 4.256 0 00-1.64-3.142 2.31 2.31 0 01-1.64-1.055l-.822-1.315a.41.41 0 00-.665 0l-.822-1.315A2.31 2.31 0 016.827 6.175v0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-2.087.8-3.642 3.128-3.642 5.77 0 2.642 1.555 4.97 3.642 5.77a2.31 2.31 0 011.64 1.055l.822 1.315a.41.41 0 00.665 0l.822-1.315a2.31 2.31 0 011.64-1.055A4.256 4.256 0 0016.5 12a4.256 4.256 0 00-1.64-3.142 2.31 2.31 0 01-1.64-1.055l-.822-1.315a.41.41 0 00-.665 0l-.822 1.315A2.31 2.31 0 016.827 6.175v0z" />
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
 );
@@ -174,3 +174,4 @@ export const ChatBubbleLeftRightIcon: React.FC<IconProps> = (props) => (
         <path strokeLinecap="round" strokeLinejoin="round" d="M4.875 14.25a2.25 2.25 0 012.25-2.25h1.5a2.25 2.25 0 012.25 2.25v1.5a2.25 2.25 0 01-2.25 2.25h-1.5a2.25 2.25 0 01-2.25-2.25v-1.5z" />
     </svg>
 );
+

@@ -1,21 +1,24 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import type { UserProfile, Meal } from './types';
-import OnboardingScreen from './components/OnboardingScreen';
-import DashboardScreen from './components/DashboardScreen';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import LandingPage from './pages/LandingPage';
+import OnboardingPage from './pages/OnboardingPage';
+import DashboardPage from './pages/DashboardPage';
+import Header from './components/ui/Header';
+import Footer from './components/ui/Footer';
 import { calculateNutritionalGoals } from './utils/nutritionCalculators';
 
 const App: React.FC = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [meals, setMeals] = useState<Meal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showLanding, setShowLanding] = useState(true); // Start with landing page by default
 
   useEffect(() => {
     try {
       const storedProfile = localStorage.getItem('userProfile');
       if (storedProfile) {
         setUserProfile(JSON.parse(storedProfile));
+        setShowLanding(false); // If user has a profile, skip landing page and go to dashboard
       }
       const storedMeals = localStorage.getItem('dailyMeals');
       // FIX: Corrected typo from toLocaleDateTimeString to toLocaleDateString.
@@ -38,10 +41,19 @@ const App: React.FC = () => {
     setIsLoading(false);
   }, []);
   
+  const handleGetStarted = () => {
+    setShowLanding(false);
+  };
+
+  const handleGoToLanding = () => {
+    setShowLanding(true);
+  };
+
   const handleOnboardingComplete = (profile: UserProfile) => {
     const profileWithDefaults = { ...profile, mealSlots: [] };
     setUserProfile(profileWithDefaults);
     localStorage.setItem('userProfile', JSON.stringify(profileWithDefaults));
+    setShowLanding(false);
   };
 
   const handleUpdateProfile = (updatedProfile: UserProfile) => {
@@ -72,29 +84,38 @@ const App: React.FC = () => {
 
   if (isLoading) {
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
             <p className="text-lg text-gray-600 dark:text-gray-400">Loading your profile...</p>
         </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300 flex flex-col">
-      <Header onResetApp={userProfile ? handleResetApp : undefined} />
-      <main className="flex-grow w-full">
-        {!userProfile || !nutritionalGoals ? (
-          <OnboardingScreen onComplete={handleOnboardingComplete} />
-        ) : (
-          <DashboardScreen 
-              userProfile={userProfile}
-              onUpdateProfile={handleUpdateProfile}
-              nutritionalGoals={nutritionalGoals}
-              meals={meals}
-              onAddMeal={handleAddMeal}
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 flex flex-col">
+      {showLanding ? (
+        <LandingPage onGetStarted={handleGetStarted} />
+      ) : (
+        <>
+          <Header 
+            onResetApp={userProfile ? handleResetApp : undefined}
+            onLogoClick={handleGoToLanding}
           />
-        )}
-      </main>
-      <Footer />
+          <main className="flex-grow w-full">
+            {!userProfile || !nutritionalGoals ? (
+              <OnboardingPage onComplete={handleOnboardingComplete} />
+            ) : (
+              <DashboardPage 
+                  userProfile={userProfile}
+                  onUpdateProfile={handleUpdateProfile}
+                  nutritionalGoals={nutritionalGoals}
+                  meals={meals}
+                  onAddMeal={handleAddMeal}
+              />
+            )}
+          </main>
+          <Footer />
+        </>
+      )}
     </div>
   );
 };

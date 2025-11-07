@@ -79,3 +79,4 @@ const MacroChart: React.FC<Props> = ({ protein, carbs, fat }) => {
 };
 
 export default MacroChart;
+

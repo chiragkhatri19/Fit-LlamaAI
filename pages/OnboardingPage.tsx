@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import type { UserProfile, Goal, ActivityLevel, Gender, DietaryPreference } from '../types';
-import { TargetIcon, DumbbellIcon, ScaleIcon, UserIcon, LlamaCornerIllustration } from './Icons';
+import { TargetIcon, DumbbellIcon, ScaleIcon, UserIcon, LlamaCornerIllustration } from '../components/ui/Icons';
 
 interface Props {
   onComplete: (profile: UserProfile) => void;
 }
 
-const OnboardingScreen: React.FC<Props> = ({ onComplete }) => {
+const OnboardingPage: React.FC<Props> = ({ onComplete }) => {
   const [step, setStep] = useState(1);
   const [profile, setProfile] = useState<Partial<UserProfile>>({
       gender: 'male',
@@ -38,7 +38,7 @@ const OnboardingScreen: React.FC<Props> = ({ onComplete }) => {
 
   const renderStep1 = () => (
     <div className="text-center">
-      <h2 className="text-2xl font-bold mb-2">Welcome to Llama Life Coach</h2>
+      <h2 className="text-2xl font-bold mb-2">Welcome to Fit Llama AI</h2>
       <p className="text-gray-500 dark:text-gray-400 mb-8">Let's get to know you to create your personalized nutrition plan.</p>
       <div className="space-y-6 text-left">
           <div>
@@ -61,7 +61,7 @@ const OnboardingScreen: React.FC<Props> = ({ onComplete }) => {
               <input type="number" name="height" id="height" value={profile.height || ''} onChange={handleChange} className="w-full p-4 rounded-md border-gray-300 dark:border-gray-600 bg-slate-100 dark:bg-slate-700 shadow-sm" placeholder="e.g., 180" required/>
           </div>
       </div>
-      <button onClick={nextStep} className="w-full mt-8 px-6 py-4 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700">Next</button>
+      <button onClick={nextStep} className="w-full mt-8 px-6 py-4 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">Next</button>
     </div>
   );
 
@@ -105,13 +105,13 @@ const OnboardingScreen: React.FC<Props> = ({ onComplete }) => {
        </div>
       <div className="flex gap-4 mt-8">
         <button onClick={prevStep} className="w-full px-6 py-4 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-md">Back</button>
-        <button onClick={handleSubmit} className="w-full px-6 py-4 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700">Finish Setup</button>
+        <button onClick={handleSubmit} className="w-full px-6 py-4 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">Finish Setup</button>
       </div>
     </div>
   );
   
   const renderRadioOption = (name: 'dietaryPreference', value: DietaryPreference, label: string) => (
-      <label className={`px-4 py-2 rounded-full cursor-pointer text-sm font-semibold transition-colors ${profile[name] === value ? 'bg-violet-600 text-white' : 'bg-gray-200 dark:bg-slate-700'}`}>
+      <label className={`px-4 py-2 rounded-full cursor-pointer text-sm font-semibold transition-colors ${profile[name] === value ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-slate-700'}`}>
           <input 
               type="radio" 
               name={name}
@@ -127,9 +127,9 @@ const OnboardingScreen: React.FC<Props> = ({ onComplete }) => {
   const renderGoalOption = (goal: Goal, title: string, description: string, icon: React.ReactNode) => (
       <div 
         onClick={() => handleRadioChange('goal', goal)}
-        className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${profile.goal === goal ? 'border-violet-500 bg-violet-50 dark:bg-slate-700' : 'border-gray-300 dark:border-gray-600 hover:border-violet-400'}`}
+        className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${profile.goal === goal ? 'border-blue-500 bg-blue-50 dark:bg-slate-700' : 'border-gray-300 dark:border-gray-600 hover:border-blue-400'}`}
       >
-          <div className={`mx-auto w-fit mb-2 ${profile.goal === goal ? 'text-violet-600 dark:text-violet-400' : 'text-gray-500'}`}>{icon}</div>
+          <div className={`mx-auto w-fit mb-2 ${profile.goal === goal ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}>{icon}</div>
           <h3 className="font-semibold text-center">{title}</h3>
           <p className="text-xs text-center text-gray-500 dark:text-gray-400">{description}</p>
       </div>
@@ -137,15 +137,15 @@ const OnboardingScreen: React.FC<Props> = ({ onComplete }) => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 overflow-hidden">
-       <div className="w-full max-w-lg mx-auto bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 md:p-8 relative">
-            <LlamaCornerIllustration className="absolute -top-12 -right-12 w-48 h-48 text-violet-200 dark:text-violet-900/50 opacity-30" />
+       <div className="w-full max-w-lg mx-auto bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 relative">
+            <LlamaCornerIllustration className="absolute -top-12 -right-12 w-48 h-48 text-blue-200 dark:text-blue-900/50 opacity-30" />
             <header className="text-center mb-6">
-                <div className="flex items-center justify-center gap-2 text-3xl font-bold text-violet-600 dark:text-violet-400">
+                <div className="flex items-center justify-center gap-2 text-3xl font-bold text-blue-600 dark:text-blue-400">
                     <UserIcon className="w-8 h-8" />
                     <h1>Profile Setup</h1>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-1.5 mt-4 dark:bg-gray-700">
-                  <div className="bg-violet-600 h-1.5 rounded-full" style={{width: `${step * 50}%`, transition: 'width 0.3s'}}></div>
+                  <div className="bg-blue-600 h-1.5 rounded-full" style={{width: `${step * 50}%`, transition: 'width 0.3s'}}></div>
                 </div>
             </header>
             <form onSubmit={handleSubmit}>
@@ -157,4 +157,5 @@ const OnboardingScreen: React.FC<Props> = ({ onComplete }) => {
   );
 };
 
-export default OnboardingScreen;
+export default OnboardingPage;
+

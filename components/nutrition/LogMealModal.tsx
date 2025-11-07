@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { analyzeImage, searchFoodDatabase } from '../services/geminiService';
-import type { Meal, FoodItem, AnalysisResult, MealSlot, FoodSearchResult } from '../types';
-import { CloseIcon, SparklesIcon, PhotoIcon, LoaderIcon, ErrorIcon, UploadIcon, SearchIcon, CameraIcon, AnimatedLlamaLoader } from './Icons';
+import { analyzeImage, searchFoodDatabase } from '../../services/geminiService';
+import type { Meal, FoodItem, AnalysisResult, MealSlot, FoodSearchResult } from '../../types';
+import { CloseIcon, SparklesIcon, PhotoIcon, LoaderIcon, ErrorIcon, UploadIcon, SearchIcon, CameraIcon, AnimatedLlamaLoader } from '../ui/Icons';
 import CameraCapture from './CameraCapture';
 
 interface Props {
@@ -33,7 +33,7 @@ const AnalyzingLoader: React.FC = () => {
 
     return (
         <div className="flex flex-col items-center justify-center text-center p-8 space-y-4 h-full">
-            <AnimatedLlamaLoader className="w-24 h-24 text-violet-500" />
+            <AnimatedLlamaLoader className="w-24 h-24 text-blue-500" />
             <p className="font-semibold text-lg">Analyzing your meal...</p>
             <div className="text-gray-500 dark:text-gray-400 text-sm h-16 flex items-center">
                  <p className="animate-fade-in-out" key={mythIndex}>{LLAMA_MYTHS[mythIndex]}</p>
@@ -250,11 +250,11 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
           25%, 75% { opacity: 1; }
         }
       `}</style>
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md md:max-w-3xl max-h-[90vh] flex flex-col">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md md:max-w-3xl max-h-[90vh] flex flex-col">
         <header className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
             <div>
                 <h2 className="text-xl font-bold">Log a New Meal</h2>
-                <select value={selectedMealSlotId} onChange={e => setSelectedMealSlotId(e.target.value)} className="bg-transparent text-sm text-violet-600 dark:text-violet-400 font-semibold focus:outline-none">
+                <select value={selectedMealSlotId} onChange={e => setSelectedMealSlotId(e.target.value)} className="bg-transparent text-sm text-blue-600 dark:text-blue-400 font-semibold focus:outline-none">
                     {mealSlots.map(slot => <option key={slot.id} value={slot.id}>{slot.name}</option>)}
                 </select>
             </div>
@@ -266,8 +266,8 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
         <div className="p-6 overflow-y-auto">
             {/* Tabs */}
             <div className="flex border-b border-gray-200 dark:border-gray-700 mb-6">
-                <button onClick={() => setActiveTab('ai')} className={`px-4 py-2 font-semibold ${activeTab === 'ai' ? 'border-b-2 border-violet-500 text-violet-600 dark:text-violet-400' : 'text-gray-500'}`}>AI Scan</button>
-                <button onClick={() => setActiveTab('manual')} className={`px-4 py-2 font-semibold ${activeTab === 'manual' ? 'border-b-2 border-violet-500 text-violet-600 dark:text-violet-400' : 'text-gray-500'}`}>Manual Entry</button>
+                <button onClick={() => setActiveTab('ai')} className={`px-4 py-2 font-semibold ${activeTab === 'ai' ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}>AI Scan</button>
+                <button onClick={() => setActiveTab('manual')} className={`px-4 py-2 font-semibold ${activeTab === 'manual' ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}>Manual Entry</button>
             </div>
 
             {/* AI Tab Content */}
@@ -282,7 +282,7 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
                                 <button onClick={() => setIsCameraOpen(true)} className="flex-1 inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-500 text-sm font-medium rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700">
                                     <CameraIcon className="w-5 h-5 mr-2"/> Use Camera
                                 </button>
-                                <label htmlFor="file-upload" className="flex-1 cursor-pointer inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700">
+                                <label htmlFor="file-upload" className="flex-1 cursor-pointer inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
                                     <PhotoIcon className="w-5 h-5 mr-2"/> Select Photo
                                 </label>
                             </div>
@@ -298,7 +298,7 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
                                 <button
                                     onClick={handleAnalyzeClick}
                                     disabled={logState === 'loading'}
-                                    className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 disabled:opacity-50"
+                                    className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 disabled:opacity-50"
                                 >
                                     {logState === 'loading' ? <LoaderIcon className="animate-spin w-5 h-5 mr-2" /> : <SparklesIcon className="w-5 h-5 mr-2" />}
                                     {logState === 'loading' ? 'Analyzing...' : (analysisResult ? 'Re-analyze' : 'Analyze Photo')}
@@ -364,7 +364,7 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
                     <form onSubmit={handleSearch}>
                         <div className="flex gap-2">
                             <input type="text" placeholder="Search for food (e.g., 'chicken breast')" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full p-3 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-600 shadow-sm" />
-                            <button type="submit" disabled={isSearching} className="p-3 rounded-md bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-50">
+                            <button type="submit" disabled={isSearching} className="p-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50">
                                 {isSearching ? <LoaderIcon className="w-6 h-6 animate-spin"/> : <SearchIcon className="w-6 h-6"/>}
                             </button>
                         </div>
@@ -375,7 +375,7 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
                     {searchResults.length > 0 && (
                         <ul className="p-2 bg-gray-50 dark:bg-slate-700/50 rounded-lg border dark:border-gray-600 max-h-48 overflow-y-auto space-y-1">
                             {searchResults.map((result, index) => (
-                                <li key={index} onClick={() => handleAddItem(result)} className="p-3 rounded-md hover:bg-violet-100 dark:hover:bg-violet-900/40 cursor-pointer">
+                                <li key={index} onClick={() => handleAddItem(result)} className="p-3 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/40 cursor-pointer">
                                     <p className="font-semibold">{result.name}</p>
                                     <p className="text-xs text-gray-500 dark:text-gray-400">{result.caloriesPer100g} kcal per 100g</p>
                                 </li>
@@ -426,12 +426,12 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
 
         <footer className="p-4 border-t border-gray-200 dark:border-gray-700 mt-auto">
             {activeTab === 'ai' && (
-                <button onClick={handleConfirmMeal} disabled={!analysisResult} className="w-full px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                <button onClick={handleConfirmMeal} disabled={!analysisResult} className="w-full px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
                     Confirm & Add Meal
                 </button>
             )}
              {activeTab === 'manual' && (
-                <button onClick={handleManualSubmit} disabled={manualItems.length === 0} className="w-full px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                <button onClick={handleManualSubmit} disabled={manualItems.length === 0} className="w-full px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
                     Add Manual Meal
                 </button>
             )}
@@ -442,3 +442,4 @@ const LogMealModal: React.FC<Props> = ({ onClose, onAddMeal, mealSlots, activeMe
 };
 
 export default LogMealModal;
+
