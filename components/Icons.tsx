@@ -2,63 +2,22 @@ import React from 'react';
 
 // Props type for all icons
 type IconProps = React.SVGProps<SVGSVGElement>;
+type ImageIconProps = React.ImgHTMLAttributes<HTMLImageElement>;
 
-export const LlamaIcon: React.FC<IconProps> = (props) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" {...props}>
-        <defs>
-            <linearGradient id="llama-bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style={{stopColor: '#8b5cf6'}} />
-                <stop offset="100%" style={{stopColor: '#3b82f6'}} />
-            </linearGradient>
-            <linearGradient id="llama-fur-gradient" x1="50%" y1="0%" x2="50%" y2="100%">
-                <stop offset="0%" style={{stopColor: '#e0e7ff'}} />
-                <stop offset="100%" style={{stopColor: '#c7d2fe'}} />
-            </linearGradient>
-            <filter id="llama-shadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
-                <feOffset in="blur" dy="2" result="offsetBlur" />
-                <feMerge>
-                    <feMergeNode in="offsetBlur" />
-                    <feMergeNode in="SourceGraphic" />
-                </feMerge>
-            </filter>
-        </defs>
-        <rect width="92" height="92" x="4" y="4" rx="28" fill="url(#llama-bg-gradient)" filter="url(#llama-shadow)" />
-        <g transform="translate(15, 20) scale(0.7)">
-            <path d="M82.8,77.2c-2.4,1.8-5.1,3.3-7.9,4.4c-11.2,4.4-23.7,4.4-34.9,0c-2.8-1.1-5.5-2.6-7.9-4.4c-2-1.5-3.8-3.1-5.4-4.9c-9.1-9.9-9.1-26,0-35.8c1.6-1.8,3.4-3.4,5.4-4.9c4.9-3.6,10.6-6,16.8-6.9c0.5,0,1,0.2,1.3,0.6c0.3,0.4,0.4,0.9,0.3,1.4c-0.4,2.2-0.6,4.4-0.6,6.6c0,2.1,0.2,4.1,0.5,6.1c0.1,0.5-0.1,1-0.5,1.3c-0.4,0.3-0.9,0.4-1.4,0.2c-3.1-0.9-6-0.4-8.7,1.4c-5.7,3.8-7.9,11.3-5.2,17.5c2.1,5,6.9,8.4,12.2,8.9c0.5,0,1,0.3,1.3,0.7c0.3,0.4,0.3,1,0.1,1.4c-0.8,1.8-1.4,3.6-1.8,5.4c-0.3,1.2,0.6,2.3,1.8,2.3h16c1.2,0,2.1-1.1,1.8-2.3c-0.4-1.9-1-3.7-1.8-5.4c-0.2-0.5-0.1-1,0.1-1.4c0.3-0.4,0.7-0.7,1.3-0.7c5.3-0.4,10-3.9,12.2-8.9c2.7-6.2,0.5-13.7-5.2-17.5c-2.7-1.8-5.6-2.3-8.7-1.4c-0.5,0.1-1.1,0-1.4-0.2c-0.4-0.3-0.6-0.8-0.5-1.3c0.3-2,0.5-4,0.5-6.1c0-2.2-0.2-4.4-0.6-6.6c-0.1-0.5,0-1,0.3-1.4c0.3-0.4,0.8-0.6,1.3-0.6c6.2,0.9,11.9,3.3,16.8,6.9c2,1.5,3.8,3.1,5.4,4.9c9.1,9.9,9.1,26,0,35.8C86.6,74.1,84.8,75.7,82.8,77.2z" fill="url(#llama-fur-gradient)"/>
-            <circle cx="65" cy="41.4" r="6" fill="#1e293b"/>
-            <circle cx="35" cy="41.4" r="6" fill="#1e293b"/>
-            <path d="M57.5,60.7c0,4.1-3.4,7.5-7.5,7.5s-7.5-3.4-7.5-7.5s3.4-7.5,7.5-7.5S57.5,56.6,57.5,60.7z" fill="white"/>
-            <path d="M54.3,58.5c-0.8,1.3-2.2,2.1-3.8,2.1c-1.6,0-3-0.8-3.8-2.1c-0.4-0.6-1.2-0.8-1.8-0.4c-0.6,0.4-0.8,1.2-0.4,1.8c1.2,1.8,3.2,2.9,5.4,2.9c2.2,0,4.2-1.1,5.4-2.9c0.4-0.6,0.2-1.4-0.4-1.8C55.5,57.7,54.7,57.9,54.3,58.5z" fill="#1e293b"/>
-        </g>
-    </svg>
+export const LlamaIcon: React.FC<ImageIconProps> = (props) => (
+    <img src="/llama-icon.png" alt="Llama Icon" {...props} />
 );
 
-export const AnimatedLlamaLoader: React.FC<IconProps> = (props) => (
+export const AnimatedLlamaLoader: React.FC<ImageIconProps> = (props) => (
     <>
     <style>{`
         @keyframes llama-bob {
             0%, 100% { transform: translateY(0) rotate(-2deg); }
             50% { transform: translateY(-3px) rotate(2deg); }
         }
-        @keyframes llama-ear-twitch {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-8deg); }
-        }
         .llama-head-bob { animation: llama-bob 1.5s infinite ease-in-out; transform-origin: center; }
-        .llama-ear-animated { animation: llama-ear-twitch 2s infinite ease-in-out; transform-origin: 50% 90%; }
     `}</style>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" {...props}>
-        <g className="llama-head-bob">
-            <path d="M82.8,77.2c-2.4,1.8-5.1,3.3-7.9,4.4c-11.2,4.4-23.7,4.4-34.9,0c-2.8-1.1-5.5-2.6-7.9-4.4c-2-1.5-3.8-3.1-5.4-4.9c-9.1-9.9-9.1-26,0-35.8c1.6-1.8,3.4-3.4,5.4-4.9c4.9-3.6,10.6-6,16.8-6.9c-0.4,4.4-0.6,8.8-0.6,13.2c0,4.2,0.4,8.2,1.2,12.1c-3.1-0.9-6-0.4-8.7,1.4c-5.7,3.8-7.9,11.3-5.2,17.5c2.1,5,6.9,8.4,12.2,8.9c-0.8,3.6-1.8,7.3-3.1,10.8h16c-1.3-3.5-2.3-7.2-3.1-10.8c5.3-0.4,10-3.9,12.2-8.9c2.7-6.2,0.5-13.7-5.2-17.5c-2.7-1.8-5.6-2.3-8.7-1.4c0.7-3.9,1.2-7.9,1.2-12.1c0-4.4-0.2-8.8-0.6-13.2c6.2,0.9,11.9,3.3,16.8,6.9c2,1.5,3.8,3.1,5.4,4.9c9.1,9.9,9.1,26,0,35.8C86.6,74.1,84.8,75.7,82.8,77.2z" fill="#c7d2fe"/>
-            <path d="M29.8 24.5c0 0 1.2-10.8 10-10.8" stroke="#c7d2fe" strokeWidth="8" strokeLinecap="round" fill="none" className="llama-ear-animated"/>
-            <path d="M70.2 24.5c0 0 -1.2-10.8 -10-10.8" stroke="#c7d2fe" strokeWidth="8" strokeLinecap="round" fill="none" />
-            <circle cx="65" cy="41.4" r="6" fill="#1e293b"/>
-            <circle cx="35" cy="41.4" r="6" fill="#1e293b"/>
-            <path d="M57.5,60.7c0,4.1-3.4,7.5-7.5,7.5s-7.5-3.4-7.5-7.5s3.4-7.5,7.5-7.5S57.5,56.6,57.5,60.7z" fill="white"/>
-            <path d="M54.3,58.5c-0.8,1.3-2.2,2.1-3.8,2.1c-1.6,0-3-0.8-3.8-2.1c-0.4-0.6-1.2-0.8-1.8-0.4c-0.6,0.4-0.8,1.2-0.4,1.8c1.2,1.8,3.2,2.9,5.4,2.9c2.2,0,4.2-1.1,5.4-2.9c0.4-0.6,0.2-1.4-0.4-1.8C55.5,57.7,54.7,57.9,54.3,58.5z" fill="#1e293b"/>
-        </g>
-    </svg>
+    <img src="/llama-icon.png" alt="Llama Loading" className="llama-head-bob" {...props} />
     </>
 );
 
