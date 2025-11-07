@@ -125,7 +125,7 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
       else if (id === 'about') navigate('/about');
       else if (id === 'pricing') navigate('/pricing');
       else if (id === 'coach') navigate('/dashboard');
-      else if (id === 'profile') navigate('/dashboard');
+      else if (id === 'profile') navigate('/profile');
       else if (id === 'login') navigate('/signin');
     }
     setIsMobileMenuOpen(false);

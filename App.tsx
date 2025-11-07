@@ -9,6 +9,8 @@ import SignupPage from './pages/SignupPage';
 import SignInPage from './pages/SignInPage';
 import OnboardingPage from './pages/OnboardingPage';
 import DashboardPage from './pages/DashboardPage';
+import ProfilePage from './pages/ProfilePage';
+import SettingsPage from './pages/SettingsPage';
 import ResizableNavbar from './components/ui/ResizableNavbar';
 import Footer from './components/ui/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -54,8 +56,7 @@ const AppContent: React.FC = () => {
       navigate('/dashboard');
       setDashboardView('coach');
     } else if (page === 'profile') {
-      navigate('/dashboard');
-      setDashboardView('dashboard');
+      navigate('/profile');
     } else if (page === 'login') {
       navigate('/signin');
     }
@@ -85,7 +86,9 @@ const AppContent: React.FC = () => {
   const currentPage = location.pathname === '/' ? 'home' : 
                      location.pathname === '/about' ? 'about' :
                      location.pathname === '/pricing' ? 'pricing' :
-                     location.pathname.startsWith('/dashboard') ? 'dashboard' : 'home';
+                     location.pathname.startsWith('/dashboard') ? 'dashboard' :
+                     location.pathname === '/profile' ? 'profile' :
+                     location.pathname === '/settings' ? 'settings' : 'home';
 
   // Don't show navbar on auth pages
   const showNavbar = !['/signup', '/signin'].includes(location.pathname);
@@ -144,6 +147,28 @@ const AppContent: React.FC = () => {
                     </>
                   )}
                 </main>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <>
+                  <ProfilePage />
+                  <Footer />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <>
+                  <SettingsPage />
+                  <Footer />
+                </>
               </ProtectedRoute>
             }
           />
