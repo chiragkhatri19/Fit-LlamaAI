@@ -42,6 +42,18 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
   useEffect(() => {
     // Sync state with actual DOM on mount
     const isCurrentlyDark = document.documentElement.classList.contains('dark');
@@ -148,7 +160,7 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
           "fixed top-0 left-1/2 -translate-x-1/2 z-50 transition-all duration-300",
           isScrolled
             ? "bg-white/95 dark:bg-slate-950/90 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/50 rounded-xl md:rounded-2xl shadow-xl shadow-slate-200/30 dark:shadow-black/50 mt-2 md:mt-4"
-            : "bg-transparent"
+            : "bg-white/80 dark:bg-slate-950/80 backdrop-blur-md md:bg-transparent border-b border-slate-200/30 dark:border-slate-800/30 md:border-0"
         )}
     >
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
@@ -192,7 +204,7 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
                 e.stopPropagation();
                 toggleDarkMode(e);
               }}
-              className="p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-blue-100 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-200 active:scale-95"
+              className="p-2.5 rounded-lg text-slate-900 dark:text-slate-100 bg-slate-100/50 dark:bg-slate-800/50 hover:bg-blue-100 dark:hover:bg-slate-700 hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-200 active:scale-95 touch-manipulation"
               aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
             >
@@ -233,13 +245,14 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-blue-100 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-200"
+              className="md:hidden p-2.5 rounded-lg text-slate-900 dark:text-slate-100 bg-slate-100/50 dark:bg-slate-800/50 hover:bg-blue-100 dark:hover:bg-slate-700 hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-200 active:scale-95 touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label="Toggle menu"
+              aria-expanded={isMobileMenuOpen}
             >
               {isMobileMenuOpen ? (
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6" />
               ) : (
-                <Menu className="w-5 h-5" />
+                <Menu className="w-6 h-6" />
               )}
             </button>
           </div>
@@ -247,55 +260,70 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-slate-200 dark:border-slate-800 mt-2 pt-4 pb-4"
-          >
-            <div className="flex flex-col gap-2">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => handleNavClick(item.id)}
-                    className={cn(
-                      "px-4 py-3 rounded-lg text-sm font-medium text-left transition-all duration-200",
-                      currentPage === item.id
-                        ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 shadow-sm"
-                        : "text-slate-700 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-300"
-                    )}
-                >
-                  {item.name}
-                </button>
-              ))}
-              {/* Sign In / User Profile in Mobile Menu */}
-              {(user || userProfile) ? (
-                <>
-                  <button
-                    onClick={() => handleNavClick('profile')}
-                    className="px-4 py-3 rounded-lg text-sm font-medium text-left text-slate-700 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-200 flex items-center gap-2"
-                  >
-                    <User className="w-4 h-4" />
-                    Profile
-                  </button>
-                  <button
-                    onClick={handleSignOut}
-                    className="px-4 py-3 rounded-lg text-sm font-medium text-left text-slate-700 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-700 dark:hover:text-red-300 transition-all duration-200 flex items-center gap-2"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Sign Out
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => handleNavClick('login')}
-                  className="px-4 py-3 rounded-lg text-sm font-medium text-left text-slate-700 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-200"
-                >
-                  Sign In
-                </button>
-              )}
-            </div>
-          </motion.div>
+          <>
+            {/* Backdrop overlay */}
+            <div 
+              className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-40 md:hidden"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="md:hidden relative z-50 mt-2 rounded-xl overflow-hidden shadow-2xl border border-slate-200/80 dark:border-slate-700/80"
+              style={{
+                background: isDarkMode 
+                  ? 'rgba(15, 23, 42, 0.98)' // slate-950 with high opacity
+                  : 'rgba(255, 255, 255, 0.98)', // white with high opacity
+                backdropFilter: 'blur(20px)',
+              }}
+            >
+              <div className="px-2 py-3">
+                <div className="flex flex-col gap-1">
+                  {navItems.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => handleNavClick(item.id)}
+                      className={cn(
+                        "px-4 py-3.5 rounded-lg text-base font-medium text-left transition-all duration-200 touch-manipulation min-h-[48px] flex items-center",
+                        currentPage === item.id
+                          ? "bg-blue-500 dark:bg-blue-600 text-white shadow-md font-semibold"
+                          : "text-slate-900 dark:text-slate-100 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-300 active:scale-[0.98]"
+                      )}
+                    >
+                      {item.name}
+                    </button>
+                  ))}
+                  {/* Sign In / User Profile in Mobile Menu */}
+                  {(user || userProfile) ? (
+                    <>
+                      <button
+                        onClick={() => handleNavClick('profile')}
+                        className="px-4 py-3.5 rounded-lg text-base font-medium text-left text-slate-900 dark:text-slate-100 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-200 flex items-center gap-3 active:scale-[0.98] touch-manipulation min-h-[48px]"
+                      >
+                        <User className="w-5 h-5" />
+                        Profile
+                      </button>
+                      <button
+                        onClick={handleSignOut}
+                        className="px-4 py-3.5 rounded-lg text-base font-medium text-left text-slate-900 dark:text-slate-100 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-700 dark:hover:text-red-400 transition-all duration-200 flex items-center gap-3 active:scale-[0.98] touch-manipulation min-h-[48px]"
+                      >
+                        <LogOut className="w-5 h-5" />
+                        Sign Out
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => handleNavClick('login')}
+                      className="px-4 py-3.5 rounded-lg text-base font-medium text-left text-white bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 transition-all duration-200 active:scale-[0.98] font-semibold shadow-md touch-manipulation min-h-[48px]"
+                    >
+                      Sign In
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </>
         )}
       </div>
     </motion.nav>

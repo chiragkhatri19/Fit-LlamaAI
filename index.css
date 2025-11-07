@@ -1,2 +1,44 @@
 @import "tailwindcss";
 
+/* Mobile optimizations */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Improve touch targets on mobile - only for interactive elements */
+@media (max-width: 768px) {
+  button:not(.ignore-touch-target),
+  a:not(.ignore-touch-target) {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Better text rendering on mobile */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Prevent zoom on input focus on iOS */
+@media screen and (max-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Better mobile viewport handling */
+@media (max-width: 640px) {
+  body {
+    overflow-x: hidden;
+  }
+}
+
