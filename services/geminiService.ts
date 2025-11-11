@@ -44,7 +44,7 @@ export async function analyzeImage(imageFile: File): Promise<AnalysisResult> {
     console.log('🔍 Sending image to Gemini for analysis...');
     
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-1.5-flash',
       contents: { parts: [imagePart, textPart] },
       config: {
         responseMimeType: "application/json",
@@ -171,7 +171,7 @@ export async function getAIAssistantInsight(profile: UserProfile, goals: Macros,
         console.log('🦙 Requesting AI Coach insights...');
         
         const response = await ai.models.generateContent({
-            model: 'gemini-2.0-flash-exp',
+            model: 'gemini-1.5-flash',
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
@@ -282,7 +282,7 @@ export async function searchFoodDatabase(query: string): Promise<FoodSearchResul
         console.log('🔍 Searching food database for:', query);
         
         const response = await ai.models.generateContent({
-            model: 'gemini-2.0-flash-exp',
+            model: 'gemini-1.5-flash',
             contents: `Act as a food nutrition database. The user is searching for "${query}". Return a JSON array of up to 10 matching food items. For each item, provide a descriptive 'name', and its nutritional information PER 100g: 'caloriesPer100g', 'proteinPer100g', 'carbsPer100g', 'fatPer100g'. Ensure all nutritional values are integers.`,
             config: {
                 responseMimeType: "application/json",
@@ -352,7 +352,7 @@ export async function getChatbotResponse(
         console.log('💬 Chatbot query:', question);
         
         const chat: Chat = ai.chats.create({
-            model: 'gemini-2.0-flash-exp',
+            model: 'gemini-1.5-flash',
             config: { systemInstruction },
             history: history
         });
