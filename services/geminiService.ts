@@ -41,8 +41,10 @@ export async function analyzeImage(imageFile: File): Promise<AnalysisResult> {
       `,
     };
 
+    console.log('🔍 Sending image to Gemini for analysis...');
+    
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.0-flash-exp',
       contents: { parts: [imagePart, textPart] },
       config: {
         responseMimeType: "application/json",
@@ -85,6 +87,7 @@ export async function analyzeImage(imageFile: File): Promise<AnalysisResult> {
     });
 
     const jsonString = response.text;
+    console.log('✅ Gemini response received');
     const result: Omit<AnalysisResult, 'items'> & { items: Omit<FoodItem, 'id'>[] } = JSON.parse(jsonString);
     
     // Basic validation & add unique IDs
@@ -100,11 +103,29 @@ export async function analyzeImage(imageFile: File): Promise<AnalysisResult> {
     return { ...result, items: itemsWithIds };
 
   } catch (error) {
-    console.error("Error analyzing image with Gemini:", error);
-    if (error instanceof Error && error.message.includes('API_KEY')) {
-        throw new Error("API key is invalid or not configured correctly.");
+    console.error("❌ Error analyzing image with Gemini:", error);
+    
+    // Log detailed error information
+    if (error instanceof Error) {
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
     }
-    throw new Error("Failed to analyze the image. The model may not be able to process this request. Please try a different image.");
+    
+    // Check for specific error types
+    if (error instanceof Error) {
+      if (error.message.includes('API_KEY') || error.message.includes('API key')) {
+        throw new Error("API key is invalid or not configured correctly. Please check your Gemini API key.");
+      }
+      if (error.message.includes('quota') || error.message.includes('limit')) {
+        throw new Error("API quota exceeded. Please try again later or check your Gemini API quota.");
+      }
+      if (error.message.includes('overloaded') || error.message.includes('503')) {
+        throw new Error("Gemini service is temporarily overloaded. Please try again in a few moments.");
+      }
+    }
+    
+    throw new Error("Failed to analyze the image. Please try again with a clearer photo of your meal.");
   }
 }
 
@@ -147,8 +168,10 @@ export async function getAIAssistantInsight(profile: UserProfile, goals: Macros,
     `;
 
     try {
+        console.log('🦙 Requesting AI Coach insights...');
+        
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-exp',
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
@@ -220,9 +243,15 @@ export async function getAIAssistantInsight(profile: UserProfile, goals: Macros,
             },
         });
         const jsonString = response.text;
+        console.log('✅ AI Coach insights received');
         return JSON.parse(jsonString) as AICoachInsight;
     } catch (error) {
-        console.error("Error getting AI assistant insight:", error);
+        console.error("❌ Error getting AI assistant insight:", error);
+        
+        // Log detailed error
+        if (error instanceof Error) {
+          console.error('AI Coach Error:', error.message);
+        }
         // Return a default error structure that matches the type
         return {
             dailySummary: "I'm having a little trouble analyzing your day right now, but keep up the great work with tracking!",
@@ -250,8 +279,10 @@ export async function getAIAssistantInsight(profile: UserProfile, goals: Macros,
 export async function searchFoodDatabase(query: string): Promise<FoodSearchResult[]> {
     if (!query.trim()) return [];
     try {
+        console.log('🔍 Searching food database for:', query);
+        
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-exp',
             contents: `Act as a food nutrition database. The user is searching for "${query}". Return a JSON array of up to 10 matching food items. For each item, provide a descriptive 'name', and its nutritional information PER 100g: 'caloriesPer100g', 'proteinPer100g', 'carbsPer100g', 'fatPer100g'. Ensure all nutritional values are integers.`,
             config: {
                 responseMimeType: "application/json",
@@ -272,9 +303,13 @@ export async function searchFoodDatabase(query: string): Promise<FoodSearchResul
             },
         });
         const jsonString = response.text;
+        console.log('✅ Food search results received');
         return JSON.parse(jsonString) as FoodSearchResult[];
     } catch (error) {
-        console.error("Error searching food database:", error);
+        console.error("❌ Error searching food database:", error);
+        if (error instanceof Error) {
+          console.error('Food Search Error:', error.message);
+        }
         throw new Error("Failed to search for food items. Please try again.");
     }
 }
@@ -314,16 +349,22 @@ export async function getChatbotResponse(
     Now, answer the user's question based on ALL of this information.`;
     
     try {
+        console.log('💬 Chatbot query:', question);
+        
         const chat: Chat = ai.chats.create({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-exp',
             config: { systemInstruction },
             history: history
         });
 
         const response = await chat.sendMessage({ message: question });
+        console.log('✅ Chatbot response received');
         return response.text;
     } catch (error) {
-        console.error("Error getting chatbot response:", error);
+        console.error("❌ Error getting chatbot response:", error);
+        if (error instanceof Error) {
+          console.error('Chatbot Error:', error.message);
+        }
         return "I'm sorry, my brain is a little fuzzy right now. Please try asking again in a moment.";
     }
 }
