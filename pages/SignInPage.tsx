@@ -1,9 +1,12 @@
 import React from 'react';
 import { SignIn } from '@clerk/clerk-react';
+import { useNavigate } from 'react-router-dom';
 import { LlamaIcon } from '../components/ui/Icons';
 import { BackgroundBeams } from '../components/ui/aceternity';
 
 const SignInPage: React.FC = () => {
+  const navigate = useNavigate();
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex items-center justify-center relative px-4">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -31,6 +34,8 @@ const SignInPage: React.FC = () => {
             path="/signin"
             signUpUrl="/signup"
             afterSignInUrl="/dashboard"
+            forceRedirectUrl="/dashboard"
+            fallbackRedirectUrl="/dashboard"
             appearance={{
               elements: {
                 rootBox: 'w-full',

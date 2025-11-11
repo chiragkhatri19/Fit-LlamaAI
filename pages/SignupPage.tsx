@@ -31,6 +31,8 @@ const SignupPage: React.FC = () => {
             path="/signup"
             signInUrl="/signin"
             afterSignUpUrl="/onboarding"
+            forceRedirectUrl="/onboarding"
+            fallbackRedirectUrl="/onboarding"
             appearance={{
               elements: {
                 rootBox: 'w-full',
