@@ -16,7 +16,7 @@ export interface SupabaseMeal extends Meal {
 export async function getUserProfile(userId: string): Promise<UserProfile | null> {
   try {
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('profiles')
       .select('*')
       .eq('user_id', userId)
       .single();
@@ -36,11 +36,10 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
 export async function upsertUserProfile(userId: string, profile: UserProfile): Promise<boolean> {
   try {
     const { error } = await supabase
-      .from('user_profiles')
+      .from('profiles')
       .upsert({
         user_id: userId,
         ...profile,
-        updated_at: new Date().toISOString(),
       });
 
     if (error) throw error;
