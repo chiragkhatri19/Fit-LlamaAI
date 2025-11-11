@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useUser, useClerk } from '@clerk/clerk-react';
 import { 
   Settings, 
   Bell, 
@@ -8,33 +8,24 @@ import {
   Trash2, 
   LogOut, 
   User, 
-  Mail, 
-  Lock,
-  Eye,
-  EyeOff,
-  Save,
+  Mail,
   ArrowLeft
 } from 'lucide-react';
 import { Button } from '../components/ui/aceternity';
 
 const SettingsPage: React.FC = () => {
-  const { user, signOut } = useAuth();
+  const { user } = useUser();
+  const { signOut } = useClerk();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState({
     email: true,
     push: true,
     reminders: true,
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [passwordData, setPasswordData] = useState({
-    current: '',
-    new: '',
-    confirm: '',
-  });
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     if (window.confirm('Are you sure you want to sign out?')) {
-      signOut();
+      await signOut();
       navigate('/');
     }
   };
@@ -44,30 +35,8 @@ const SettingsPage: React.FC = () => {
       'This action cannot be undone. Type "DELETE" to confirm:'
     );
     if (confirm === 'DELETE') {
-      // In a real app, this would call your backend API
-      localStorage.removeItem('authUser');
-      localStorage.removeItem('userProfile');
-      localStorage.removeItem('users');
-      localStorage.removeItem('dailyMeals');
-      signOut();
-      navigate('/');
-      alert('Account deleted successfully');
+      alert('Please contact support to delete your account.');
     }
-  };
-
-  const handlePasswordChange = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passwordData.new !== passwordData.confirm) {
-      alert('New passwords do not match');
-      return;
-    }
-    if (passwordData.new.length < 6) {
-      alert('Password must be at least 6 characters');
-      return;
-    }
-    // In a real app, this would call your backend API
-    alert('Password changed successfully');
-    setPasswordData({ current: '', new: '', confirm: '' });
   };
 
   return (
@@ -175,66 +144,11 @@ const SettingsPage: React.FC = () => {
                 <span className="text-sm font-medium">Email Address</span>
               </div>
               <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                {user?.email || 'No email'}
+                {user?.primaryEmailAddress?.emailAddress || 'No email'}
               </p>
             </div>
 
-            {user?.authMethod === 'email' && (
-              <form onSubmit={handlePasswordChange} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    Current Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      value={passwordData.current}
-                      onChange={(e) => setPasswordData({ ...passwordData, current: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Enter current password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                    >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    New Password
-                  </label>
-                  <input
-                    type="password"
-                    value={passwordData.new}
-                    onChange={(e) => setPasswordData({ ...passwordData, new: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter new password"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    Confirm New Password
-                  </label>
-                  <input
-                    type="password"
-                    value={passwordData.confirm}
-                    onChange={(e) => setPasswordData({ ...passwordData, confirm: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Confirm new password"
-                  />
-                </div>
-
-                <Button type="submit" variant="moving-border" className="w-full">
-                  <Save className="w-4 h-4 mr-2" />
-                  Change Password
-                </Button>
-              </form>
-            )}
+            {/* Password change removed - managed by Clerk */}
           </div>
         </div>
 
