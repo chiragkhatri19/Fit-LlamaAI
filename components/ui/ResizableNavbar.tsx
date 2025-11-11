@@ -124,16 +124,9 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
-            {/* User Profile - Desktop only */}
+            {/* Sign Out Button - Desktop only */}
             {isSignedIn ? (
               <div className="hidden md:flex items-center gap-2">
-                <button
-                  onClick={() => handleNavClick('profile')}
-                  className="p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-blue-100 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-200"
-                  aria-label="User profile"
-                >
-                  <User className="w-5 h-5" />
-                </button>
                 <button
                   onClick={handleSignOut}
                   className="p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-700 dark:hover:text-red-300 transition-all duration-200"
@@ -204,13 +197,6 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
                   {/* Sign In / User Profile in Mobile Menu */}
                   {(user || userProfile) ? (
                     <>
-                      <button
-                        onClick={() => handleNavClick('profile')}
-                        className="px-4 py-3.5 rounded-lg text-base font-medium text-left text-slate-900 dark:text-slate-100 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-200 flex items-center gap-3 active:scale-[0.98] touch-manipulation min-h-[48px]"
-                      >
-                        <User className="w-5 h-5" />
-                        Profile
-                      </button>
                       <button
                         onClick={handleSignOut}
                         className="px-4 py-3.5 rounded-lg text-base font-medium text-left text-slate-900 dark:text-slate-100 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-700 dark:hover:text-red-400 transition-all duration-200 flex items-center gap-3 active:scale-[0.98] touch-manipulation min-h-[48px]"

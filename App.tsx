@@ -21,7 +21,7 @@ import { calculateNutritionalGoals } from './utils/nutritionCalculators';
 const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '';
 
 if (!CLERK_PUBLISHABLE_KEY) {
-  throw new Error('Missing Clerk Publishable Key');
+  console.error('Missing Clerk Publishable Key - check .env.local file');
 }
 
 const AppContent: React.FC = () => {
@@ -54,8 +54,9 @@ const AppContent: React.FC = () => {
       const profile = await getUserProfile(user.id);
       setUserProfile(profile);
 
-      // Load meals
-      const today = new Date().toLocaleDateString();
+      // Load meals - use YYYY-MM-DD format
+      const today = new Date().toISOString().split('T')[0];
+      console.log('Loading meals for date:', today); // Debug log
       const meals = await getUserMeals(user.id, today);
       setMeals(meals);
 
@@ -102,9 +103,17 @@ const AppContent: React.FC = () => {
   
   const handleAddMeal = async (meal: Meal) => {
     if (!user?.id) return;
+    console.log('Adding meal for user:', user.id, meal); // Debug log
     const success = await addMealToDb(user.id, meal);
     if (success) {
-      setMeals([...meals, meal]);
+      // Refresh meals from database to ensure we have the latest - use YYYY-MM-DD format
+      const today = new Date().toISOString().split('T')[0];
+      console.log('Fetching meals for date:', today); // Debug log
+      const updatedMeals = await getUserMeals(user.id, today);
+      console.log('Refreshed meals after add:', updatedMeals); // Debug log
+      setMeals(updatedMeals);
+    } else {
+      console.error('Failed to add meal to database');
     }
   };
 

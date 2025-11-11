@@ -1,13 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useUser } from '@clerk/clerk-react';
+import { getUserProfile } from '../services/supabaseService';
 import { User, Edit, Settings, Calendar, Target, Activity, Utensils, Clock, Ruler, Weight, Cake, Users } from 'lucide-react';
 import { Button } from '../components/ui/aceternity';
 import type { UserProfile, Goal, ActivityLevel, Gender, DietaryPreference } from '../types';
 
 const ProfilePage: React.FC = () => {
-  const { user, userProfile } = useAuth();
+  const { user } = useUser();
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+
+  // Load user profile from Supabase
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!user?.id) {
+        setIsLoading(false);
+        return;
+      }
+      
+      setIsLoading(true);
+      const profile = await getUserProfile(user.id);
+      setUserProfile(profile);
+      setIsLoading(false);
+    };
+    
+    loadProfile();
+  }, [user?.id]);
 
   const formatActivityLevel = (level: ActivityLevel): string => {
     const levels: Record<ActivityLevel, string> = {
@@ -41,6 +61,14 @@ const ProfilePage: React.FC = () => {
   const formatGender = (gender: Gender): string => {
     return gender === 'male' ? 'Male' : 'Female';
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex items-center justify-center">
+        <p className="text-lg text-slate-600 dark:text-slate-400">Loading profile...</p>
+      </div>
+    );
+  }
 
   if (!userProfile) {
     return (
@@ -86,15 +114,15 @@ const ProfilePage: React.FC = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-sky-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                {user?.name?.charAt(0).toUpperCase() || 'U'}
+                {user?.fullName?.charAt(0).toUpperCase() || user?.firstName?.charAt(0).toUpperCase() || 'U'}
               </div>
               <div className="flex-1">
                 <p className="font-semibold text-slate-900 dark:text-slate-100 text-lg">
-                  {user?.name || 'User'}
+                  {user?.fullName || user?.firstName || 'User'}
                 </p>
-                <p className="text-slate-600 dark:text-slate-400">{user?.email || 'No email'}</p>
+                <p className="text-slate-600 dark:text-slate-400">{user?.primaryEmailAddress?.emailAddress || 'No email'}</p>
                 <p className="text-sm text-slate-500 dark:text-slate-500 mt-1">
-                  Signed in with {user?.authMethod === 'google' ? 'Google' : 'Email'}
+                  Signed in with Clerk
                 </p>
               </div>
             </div>

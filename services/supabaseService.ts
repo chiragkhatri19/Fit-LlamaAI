@@ -60,40 +60,73 @@ export async function getUserMeals(userId: string, date?: string): Promise<Meal[
       .order('created_at', { ascending: false });
 
     if (date) {
-      const startOfDay = new Date(date);
-      startOfDay.setHours(0, 0, 0, 0);
-      const endOfDay = new Date(date);
-      endOfDay.setHours(23, 59, 59, 999);
-
-      query = query
-        .gte('created_at', startOfDay.toISOString())
-        .lte('created_at', endOfDay.toISOString());
+      // Use the date column for filtering (not created_at timestamp)
+      query = query.eq('date', new Date(date).toISOString().split('T')[0]);
     }
 
     const { data, error } = await query;
 
-    if (error) throw error;
-    return (data || []) as Meal[];
+    if (error) {
+      console.error('❌ Supabase error fetching meals:', error);
+      throw error;
+    }
+    
+    console.log('✅ Fetched meals from Supabase:', data); // Debug log
+    console.log('Number of meals:', data?.length || 0); // Debug log
+    
+    // Convert database format to app format (meal_slot_id -> mealSlotId)
+    const meals = (data || []).map((meal: any) => ({
+      id: meal.id,
+      mealSlotId: meal.meal_slot_id, // Convert snake_case to camelCase
+      name: meal.name,
+      items: meal.items,
+      totals: meal.totals,
+      insights: meal.insights,
+    }));
+    
+    console.log('Formatted meals:', meals); // Debug log
+    return meals as Meal[];
   } catch (error) {
-    console.error('Error fetching meals:', error);
+    console.error('❌ Error fetching meals:', error);
     return [];
   }
 }
 
 export async function addMeal(userId: string, meal: Meal): Promise<boolean> {
   try {
-    const { error } = await supabase
+    const mealData = {
+      user_id: userId,
+      name: meal.name,
+      items: meal.items, // Supabase will handle JSONB automatically
+      totals: meal.totals, // Supabase will handle JSONB automatically
+      insights: meal.insights || [],
+      timestamp: (meal as any).timestamp || new Date().toISOString(),
+      date: new Date().toISOString().split('T')[0], // Store date as YYYY-MM-DD
+      meal_slot_id: meal.mealSlotId || 'custom', // Use mealSlotId from the meal object
+      created_at: new Date().toISOString(),
+    };
+    
+    console.log('Inserting meal into Supabase:', mealData); // Debug log
+    console.log('User ID:', userId); // Debug log
+    
+    const { data, error } = await supabase
       .from('meals')
-      .insert({
-        user_id: userId,
-        ...meal,
-        created_at: new Date().toISOString(),
-      });
+      .insert(mealData)
+      .select();
 
-    if (error) throw error;
+    if (error) {
+      console.error('❌ Supabase error adding meal:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      console.error('Error details:', error.details);
+      console.error('Error hint:', error.hint);
+      throw error;
+    }
+    
+    console.log('✅ Meal inserted successfully:', data); // Debug log
     return true;
   } catch (error) {
-    console.error('Error adding meal:', error);
+    console.error('❌ Error adding meal:', error);
     return false;
   }
 }
