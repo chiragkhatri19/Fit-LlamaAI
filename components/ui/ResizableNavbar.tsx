@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { useUser, useClerk } from '@clerk/clerk-react';
 import { LlamaIcon } from './Icons';
 import { User, Menu, X, LogOut } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { useAuth } from '../../contexts/AuthContext';
 
 interface ResizableNavbarProps {
   onLogoClick?: () => void;
@@ -20,7 +20,8 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
   currentPage = 'home',
 }) => {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, isSignedIn } = useUser();
+  const { signOut } = useClerk();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { scrollY } = useScroll();
@@ -70,8 +71,8 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
     setIsMobileMenuOpen(false);
   };
 
-  const handleSignOut = () => {
-    signOut();
+  const handleSignOut = async () => {
+    await signOut();
     navigate('/');
     setIsMobileMenuOpen(false);
   };
@@ -124,7 +125,7 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
             {/* User Profile - Desktop only */}
-            {(user || userProfile) ? (
+            {isSignedIn ? (
               <div className="hidden md:flex items-center gap-2">
                 <button
                   onClick={() => handleNavClick('profile')}
@@ -180,9 +181,7 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
               exit={{ opacity: 0, y: -10 }}
               className="md:hidden relative z-50 mt-2 rounded-xl overflow-hidden shadow-2xl border border-slate-200/80 dark:border-slate-700/80"
               style={{
-                background: isDarkMode 
-                  ? 'rgba(15, 23, 42, 0.98)' // slate-950 with high opacity
-                  : 'rgba(255, 255, 255, 0.98)', // white with high opacity
+                background: 'rgba(15, 23, 42, 0.98)', // dark mode
                 backdropFilter: 'blur(20px)',
               }}
             >

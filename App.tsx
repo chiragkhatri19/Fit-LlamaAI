@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { ClerkProvider, SignedIn, SignedOut, useUser } from '@clerk/clerk-react';
 import type { UserProfile, Meal } from './types';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { getUserProfile, upsertUserProfile, getUserMeals, addMeal as addMealToDb, subscribeToMeals } from './services/supabaseService';
 import LandingPage from './pages/LandingPage';
 import AboutPage from './pages/AboutPage';
 import PricingPage from './pages/PricingPage';
@@ -16,11 +17,17 @@ import Footer from './components/ui/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import { calculateNutritionalGoals } from './utils/nutritionCalculators';
 
-// Get Google OAuth client ID from environment variable or use a default
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+// Get Clerk publishable key from environment variable
+const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '';
+
+if (!CLERK_PUBLISHABLE_KEY) {
+  throw new Error('Missing Clerk Publishable Key');
+}
 
 const AppContent: React.FC = () => {
   const [meals, setMeals] = useState<Meal[]>([]);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   
   // Ensure dark mode is always enabled
   useEffect(() => {
@@ -31,26 +38,36 @@ const AppContent: React.FC = () => {
   const [dashboardView, setDashboardView] = useState<'dashboard' | 'coach'>('dashboard');
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, userProfile, updateUserProfile, isLoading: authLoading } = useAuth();
+  const { user, isLoaded } = useUser();
 
+  // Load user profile and meals from Supabase
   useEffect(() => {
-    // Load meals from localStorage
-    try {
-      const storedMeals = localStorage.getItem('dailyMeals');
-      const today = new Date().toLocaleDateString();
-      if (storedMeals) {
-        const parsedMeals = JSON.parse(storedMeals);
-        if (parsedMeals.date === today) {
-          setMeals(parsedMeals.meals);
-        } else {
-          localStorage.removeItem('dailyMeals');
-        }
+    const loadUserData = async () => {
+      if (!user?.id) {
+        setIsLoadingProfile(false);
+        return;
       }
-    } catch (error) {
-      console.error("Failed to load meals from localStorage", error);
-      localStorage.removeItem('dailyMeals');
-    }
-  }, []);
+
+      setIsLoadingProfile(true);
+      
+      // Load profile
+      const profile = await getUserProfile(user.id);
+      setUserProfile(profile);
+
+      // Load meals
+      const today = new Date().toLocaleDateString();
+      const meals = await getUserMeals(user.id, today);
+      setMeals(meals);
+
+      setIsLoadingProfile(false);
+
+      // Subscribe to real-time meal updates
+      const unsubscribe = subscribeToMeals(user.id, setMeals);
+      return unsubscribe;
+    };
+
+    loadUserData();
+  }, [user?.id]);
 
   const handleNavigate = (page: string) => {
     if (page === 'home') {
@@ -69,20 +86,26 @@ const AppContent: React.FC = () => {
     }
   };
 
-  const handleOnboardingComplete = (profile: UserProfile) => {
+  const handleOnboardingComplete = async (profile: UserProfile) => {
+    if (!user?.id) return;
     const profileWithDefaults = { ...profile, mealSlots: [] };
-    updateUserProfile(profileWithDefaults);
+    await upsertUserProfile(user.id, profileWithDefaults);
+    setUserProfile(profileWithDefaults);
     navigate('/dashboard');
   };
 
-  const handleUpdateProfile = (updatedProfile: UserProfile) => {
-    updateUserProfile(updatedProfile);
+  const handleUpdateProfile = async (updatedProfile: UserProfile) => {
+    if (!user?.id) return;
+    await upsertUserProfile(user.id, updatedProfile);
+    setUserProfile(updatedProfile);
   };
   
-  const handleAddMeal = (meal: Meal) => {
-    const updatedMeals = [...meals, meal];
-    setMeals(updatedMeals);
-    localStorage.setItem('dailyMeals', JSON.stringify({ date: new Date().toLocaleDateString(), meals: updatedMeals }));
+  const handleAddMeal = async (meal: Meal) => {
+    if (!user?.id) return;
+    const success = await addMealToDb(user.id, meal);
+    if (success) {
+      setMeals([...meals, meal]);
+    }
   };
 
   const nutritionalGoals = useMemo(() => {
@@ -100,7 +123,7 @@ const AppContent: React.FC = () => {
   // Don't show navbar on auth pages
   const showNavbar = !['/signup', '/signin'].includes(location.pathname);
 
-  if (authLoading) {
+  if (!isLoaded || isLoadingProfile) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
         <p className="text-lg text-gray-600 dark:text-gray-400">Loading...</p>
@@ -187,14 +210,12 @@ const AppContent: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  // For now, we'll skip GoogleOAuthProvider to avoid errors
-  // Google OAuth can be added later when properly configured
   return (
-    <AuthProvider>
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
       <Router>
         <AppContent />
       </Router>
-    </AuthProvider>
+    </ClerkProvider>
   );
 };
 
