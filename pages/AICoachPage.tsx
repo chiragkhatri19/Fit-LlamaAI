@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import type { AICoachInsight, Macros, Meal, UserProfile, MacroAnalysis, RecipeSuggestion } from '../types';
 import { getAIAssistantInsight } from '../services/geminiService';
-import { LightbulbIcon, SparklesIcon, CheckCircleIcon, FireIcon, ClockIcon, WaterDropIcon, CheckBadgeIcon, TrendingUpIcon, PlusCircleIcon, AnimatedLlamaLoader, LlamaIcon } from './Icons';
-import ChatbotCard from './ChatbotCard';
+import { LightbulbIcon, SparklesIcon, CheckCircleIcon, FireIcon, ClockIcon, WaterDropIcon, CheckBadgeIcon, TrendingUpIcon, PlusCircleIcon, AnimatedLlamaLoader, LlamaIcon } from '../components/ui/Icons';
+import ChatbotCard from '../components/nutrition/ChatbotCard';
 
 interface Props {
   userProfile: UserProfile;
@@ -39,7 +39,7 @@ const AICoachPage: React.FC<Props> = ({ userProfile, nutritionalGoals, meals }) 
   }
   
   const Card: React.FC<{children: React.ReactNode, icon: React.ReactNode, title: string, className?: string}> = ({ children, icon, title, className }) => (
-      <div className={`bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg p-6 animate-fade-in ${className}`}>
+      <div className={`bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg p-6 animate-fade-in ${className}`}>
         <div className="flex items-center gap-3 mb-4">
             {icon}
             <h3 className="text-xl font-bold">{title}</h3>
@@ -51,14 +51,14 @@ const AICoachPage: React.FC<Props> = ({ userProfile, nutritionalGoals, meals }) 
   return (
     <div className="space-y-6">
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center gap-3 text-gray-600 dark:text-gray-400 py-20 bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg">
-          <AnimatedLlamaLoader className="w-24 h-24 text-violet-500" />
+        <div className="flex flex-col items-center justify-center gap-3 text-gray-600 dark:text-gray-400 py-20 bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg">
+          <AnimatedLlamaLoader className="w-24 h-24 text-blue-500" />
           <span className="font-semibold">Your Llama is thinking...</span>
           <p className="text-sm text-gray-500">Whipping up some great advice!</p>
         </div>
       ) : insight ? (
         <>
-            <Card icon={<LightbulbIcon className="w-6 h-6 text-violet-500"/>} title="Daily Summary">
+            <Card icon={<LightbulbIcon className="w-6 h-6 text-blue-500"/>} title="Daily Summary">
                 <p className="text-gray-700 dark:text-gray-300">{insight.dailySummary}</p>
             </Card>
 
@@ -104,14 +104,14 @@ const AICoachPage: React.FC<Props> = ({ userProfile, nutritionalGoals, meals }) 
                 </div>
             </Card>
             
-             <Card icon={<WaterDropIcon className="w-6 h-6 text-cyan-500"/>} title="Lorenzo's Corner">
+             <Card icon={<WaterDropIcon className="w-6 h-6 text-sky-500"/>} title="Lorenzo's Corner">
                 <div className="space-y-4">
                     <div>
                         <h4 className="font-semibold text-sm mb-1">Hydration Tip</h4>
                         <p className="text-xs text-gray-600 dark:text-gray-400">{insight.hydrationTip}</p>
                     </div>
                     <div className="p-3 bg-gray-100 dark:bg-slate-800 rounded-lg">
-                        <p className="text-sm font-bold text-violet-600 dark:text-violet-400">Llama Fact of the Day!</p>
+                        <p className="text-sm font-bold text-blue-600 dark:text-blue-400">Llama Fact of the Day!</p>
                         <p className="text-xs mt-1"><span className="font-semibold">{insight.microNutrientTip.name}:</span> {insight.microNutrientTip.tip}</p>
                     </div>
                 </div>
@@ -124,7 +124,7 @@ const AICoachPage: React.FC<Props> = ({ userProfile, nutritionalGoals, meals }) 
                         <ul className="space-y-2">
                            {insight.quickAddIdeas.map((idea, i) => (
                                <li key={i} className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-md text-sm">
-                                   <SparklesIcon className="w-4 h-4 text-violet-500 flex-shrink-0"/>
+                                   <SparklesIcon className="w-4 h-4 text-blue-500 flex-shrink-0"/>
                                    <span>{idea}</span>
                                 </li>
                            ))}
@@ -174,7 +174,7 @@ const MacroAnalysisCard: React.FC<{title: string, analysis: MacroAnalysis}> = ({
 
 const RecipeCard: React.FC<{recipe: RecipeSuggestion}> = ({ recipe }) => {
     return (
-        <div className="p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg border border-gray-200 dark:border-gray-600 hover:shadow-md hover:border-violet-400 transition-all">
+        <div className="p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg border border-gray-200 dark:border-gray-600 hover:shadow-md hover:border-blue-400 transition-all">
             <p className="font-bold text-sm">{recipe.name}</p>
             <p className="text-xs text-gray-600 dark:text-gray-400">{recipe.description}</p>
         </div>
@@ -183,3 +183,4 @@ const RecipeCard: React.FC<{recipe: RecipeSuggestion}> = ({ recipe }) => {
 
 
 export default AICoachPage;
+

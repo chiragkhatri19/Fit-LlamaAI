@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { CloseIcon } from './Icons';
+import { CloseIcon } from '../ui/Icons';
 
 interface Props {
   onCapture: (file: File) => void;
@@ -78,3 +78,4 @@ const CameraCapture: React.FC<Props> = ({ onCapture, onClose }) => {
 };
 
 export default CameraCapture;
+
