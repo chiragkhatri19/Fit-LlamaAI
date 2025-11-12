@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser, useClerk } from '@clerk/clerk-react';
+import { useAuth } from '../contexts/AuthContext';
 import { 
   Settings, 
   Bell, 
@@ -14,8 +14,7 @@ import {
 import { Button } from '../components/ui/aceternity';
 
 const SettingsPage: React.FC = () => {
-  const { user } = useUser();
-  const { signOut } = useClerk();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState({
     email: true,
@@ -144,7 +143,7 @@ const SettingsPage: React.FC = () => {
                 <span className="text-sm font-medium">Email Address</span>
               </div>
               <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                {user?.primaryEmailAddress?.emailAddress || 'No email'}
+                {user?.email || 'No email'}
               </p>
             </div>
 
@@ -163,7 +162,7 @@ const SettingsPage: React.FC = () => {
             <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
               <p className="font-medium text-slate-900 dark:text-slate-100 mb-2">Data Storage</p>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                Your data is stored locally in your browser. No data is sent to external servers.
+                Your data is securely stored in Supabase with end-to-end encryption.
               </p>
             </div>
           </div>

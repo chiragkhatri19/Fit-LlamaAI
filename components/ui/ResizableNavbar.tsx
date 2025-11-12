@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useUser, useClerk } from '@clerk/clerk-react';
+import { useAuth } from '../../contexts/AuthContext';
 import { LlamaIcon } from './Icons';
 import { User, Menu, X, LogOut } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -20,8 +20,8 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
   currentPage = 'home',
 }) => {
   const navigate = useNavigate();
-  const { user, isSignedIn } = useUser();
-  const { signOut } = useClerk();
+  const { user } = useAuth();
+  const { signOut } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { scrollY } = useScroll();
@@ -50,11 +50,20 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
 
   // Theme is now managed by useTheme hook
 
-  const navItems = [
-    { name: 'About', id: 'about' },
-    { name: 'Pricing', id: 'pricing' },
-    { name: 'AI Coach', id: 'coach' },
-  ];
+  // Navigation items based on auth status
+  const navItems = user
+    ? [
+        { name: 'Dashboard', id: 'dashboard' },
+        { name: 'AI Coach', id: 'coach' },
+        { name: 'About', id: 'about' },
+        { name: 'Pricing', id: 'pricing' },
+        { name: 'Contact', id: 'contact' },
+      ]
+    : [
+        { name: 'About', id: 'about' },
+        { name: 'Pricing', id: 'pricing' },
+        { name: 'Contact', id: 'contact' },
+      ];
 
   const handleNavClick = (id: string) => {
     if (onNavigate) {
@@ -65,6 +74,8 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
       else if (id === 'about') navigate('/about');
       else if (id === 'pricing') navigate('/pricing');
       else if (id === 'coach') navigate('/dashboard');
+      else if (id === 'dashboard') navigate('/dashboard');
+      else if (id === 'contact') navigate('/contact');
       else if (id === 'profile') navigate('/profile');
       else if (id === 'login') navigate('/signin');
     }
@@ -125,7 +136,7 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
             {/* Sign Out Button - Desktop only */}
-            {isSignedIn ? (
+            {user ? (
               <div className="hidden md:flex items-center gap-2">
                 <button
                   onClick={handleSignOut}
@@ -195,7 +206,7 @@ const ResizableNavbar: React.FC<ResizableNavbarProps> = ({
                     </button>
                   ))}
                   {/* Sign In / User Profile in Mobile Menu */}
-                  {(user || userProfile) ? (
+                  {user ? (
                     <>
                       <button
                         onClick={handleSignOut}

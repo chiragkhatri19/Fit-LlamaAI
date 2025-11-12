@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { ClerkProvider, SignedIn, SignedOut, useUser } from '@clerk/clerk-react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import type { UserProfile, Meal } from './types';
 import { getUserProfile, upsertUserProfile, getUserMeals, addMeal as addMealToDb, subscribeToMeals } from './services/supabaseService';
 import LandingPage from './pages/LandingPage';
 import AboutPage from './pages/AboutPage';
 import PricingPage from './pages/PricingPage';
+import ContactPage from './pages/ContactPage';
 import SignupPage from './pages/SignupPage';
 import SignInPage from './pages/SignInPage';
 import OnboardingPage from './pages/OnboardingPage';
@@ -16,13 +17,6 @@ import ResizableNavbar from './components/ui/ResizableNavbar';
 import Footer from './components/ui/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import { calculateNutritionalGoals } from './utils/nutritionCalculators';
-
-// Get Clerk publishable key from environment variable
-const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '';
-
-if (!CLERK_PUBLISHABLE_KEY) {
-  console.error('Missing Clerk Publishable Key - check .env.local file');
-}
 
 const AppContent: React.FC = () => {
   const [meals, setMeals] = useState<Meal[]>([]);
@@ -38,7 +32,7 @@ const AppContent: React.FC = () => {
   const [dashboardView, setDashboardView] = useState<'dashboard' | 'coach'>('dashboard');
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isLoaded } = useUser();
+  const { user, isLoading } = useAuth();
 
   // Load user profile and meals from Supabase
   useEffect(() => {
@@ -80,6 +74,11 @@ const AppContent: React.FC = () => {
     } else if (page === 'coach') {
       navigate('/dashboard');
       setDashboardView('coach');
+    } else if (page === 'dashboard') {
+      navigate('/dashboard');
+      setDashboardView('dashboard');
+    } else if (page === 'contact') {
+      navigate('/contact');
     } else if (page === 'profile') {
       navigate('/profile');
     } else if (page === 'login') {
@@ -125,6 +124,7 @@ const AppContent: React.FC = () => {
   const currentPage = location.pathname === '/' ? 'home' : 
                      location.pathname === '/about' ? 'about' :
                      location.pathname === '/pricing' ? 'pricing' :
+                     location.pathname === '/contact' ? 'contact' :
                      location.pathname.startsWith('/dashboard') ? 'dashboard' :
                      location.pathname === '/profile' ? 'profile' :
                      location.pathname === '/settings' ? 'settings' : 'home';
@@ -132,7 +132,7 @@ const AppContent: React.FC = () => {
   // Don't show navbar on auth pages
   const showNavbar = !['/signup', '/signin'].includes(location.pathname);
 
-  if (!isLoaded || isLoadingProfile) {
+  if (isLoading || isLoadingProfile) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
         <p className="text-lg text-gray-600 dark:text-gray-400">Loading...</p>
@@ -155,8 +155,10 @@ const AppContent: React.FC = () => {
           <Route path="/" element={<LandingPage onGetStarted={() => navigate('/signup')} />} />
           <Route path="/about" element={<><AboutPage /><Footer /></>} />
           <Route path="/pricing" element={<><PricingPage /><Footer /></>} />
+          <Route path="/contact" element={<><ContactPage /><Footer /></>} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/signin" element={<SignInPage />} />
+          <Route path="/auth/callback" element={<div className="min-h-screen bg-slate-950 flex items-center justify-center"><p className="text-lg text-gray-400">Completing sign in...</p></div>} />
           <Route
             path="/onboarding"
             element={
@@ -220,11 +222,11 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
-      <Router>
+    <Router>
+      <AuthProvider>
         <AppContent />
-      </Router>
-    </ClerkProvider>
+      </AuthProvider>
+    </Router>
   );
 };
 

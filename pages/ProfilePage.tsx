@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '@clerk/clerk-react';
+import { useAuth } from '../contexts/AuthContext';
 import { getUserProfile } from '../services/supabaseService';
 import { User, Edit, Settings, Calendar, Target, Activity, Utensils, Clock, Ruler, Weight, Cake, Users } from 'lucide-react';
 import { Button } from '../components/ui/aceternity';
 import type { UserProfile, Goal, ActivityLevel, Gender, DietaryPreference } from '../types';
 
 const ProfilePage: React.FC = () => {
-  const { user } = useUser();
+  const { user } = useAuth();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -114,15 +114,15 @@ const ProfilePage: React.FC = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-sky-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                {user?.fullName?.charAt(0).toUpperCase() || user?.firstName?.charAt(0).toUpperCase() || 'U'}
+                {user?.email?.charAt(0).toUpperCase() || 'U'}
               </div>
               <div className="flex-1">
                 <p className="font-semibold text-slate-900 dark:text-slate-100 text-lg">
-                  {user?.fullName || user?.firstName || 'User'}
+                  {user?.email?.split('@')[0] || 'User'}
                 </p>
-                <p className="text-slate-600 dark:text-slate-400">{user?.primaryEmailAddress?.emailAddress || 'No email'}</p>
+                <p className="text-slate-600 dark:text-slate-400">{user?.email || 'No email'}</p>
                 <p className="text-sm text-slate-500 dark:text-slate-500 mt-1">
-                  Signed in with Clerk
+                  Signed in with Supabase Auth
                 </p>
               </div>
             </div>
